@@ -1,0 +1,12 @@
+{
+  "name": "ac-tune-maker",
+  "version": "1.0.0",
+  "description": "Animal Crossing tune maker",
+  "license": "MIT",
+  "scripts": {
+    "dev": "parcel src/index.html"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  }
+}
