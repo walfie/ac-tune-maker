@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">
+<style>
+.frog--shifted {
+  transform: translate(150px, 150px);
+}
+
+.frog__eye,
+.frog__nose {
+  fill: #3d2700;
+}
+
+.frog__eye--excited {
+  stroke: #3d2700;
+  stroke-width: 10px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.frog__eye--closed {
+  width: 45px;
+  height: 10px;
+  rx: 5px;
+}
+
+.frog__mouth--closed {
+  fill: #3d2700;
+  width: 175px;
+  height: 10px;
+  rx: 7px;
+}
+
+.frog__mouth--open {
+  fill: #fafbe3;
+}
+
+.frog__text {
+  fill: #3d2700;
+  font-size: 135px;
+  font-weight: bold;
+  font-family: Helvetica, Arial, sans-serif;
+  text-anchor: middle;
+  transform: translate(150px, 215px);
+}
+
+.frog__text--large {
+  font-size: 160px;
+  transform: translate(150px, 245px);
+}
+</style>
+
+<symbol id="frog-base">
+  <g class="frog__base frog--shifted">
+    <ellipse cx="0" cy="0" rx="150" ry="120"></ellipse>
+    <circle r="40" cx="-60" cy="-110"></circle>
+    <circle r="40" cx="60" cy="-110"></circle>
+  </g>
+</symbol>
+
+<mask id="frog-mouth-mask">
+  <ellipse cx="0" cy="50" rx="260" ry="115" fill="white"></ellipse>
+</mask>
+
+<symbol id="frog-nose">
+  <g class="frog--shifted frog__nose">
+    <circle r="3" cx="-7" cy="-90"></circle>
+    <circle r="3" cx="7" cy="-90"></circle>
+  </g>
+</symbol>
+
+<symbol id="frog-eyes-and-mouth">
+  <use href="#frog-nose" />
+  <g class="frog--shifted">
+    <g class="frog__eye">
+      <circle r="15" cx="-60" cy="-110"></circle>
+      <circle r="15" cx="60" cy="-110"></circle>
+    </g>
+
+    <g class="frog__mouth--open">
+      <ellipse cx="0" cy="5" rx="120" ry="100" mask="url(#frog-mouth-mask)"></ellipse>
+    </g>
+  </g>
+</symbol>
+
+<symbol id="frog-normal">
+  <use href="#frog-base" />
+  <use href="#frog-eyes-and-mouth" />
+</symbol>
+
+<symbol id="frog-hold">
+  <use href="#frog-base" />
+  <g transform="translate(15 0)">
+    <use href="#frog-eyes-and-mouth" />
+  </g>
+</symbol>
+
+<symbol id="frog-rest">
+  <use href="#frog-base" />
+  <use href="#frog-nose" />
+  <g class="frog--shifted">
+    <rect class="frog__eye frog__eye--closed" x="-85" y="-120"></rect>
+    <rect class="frog__eye frog__eye--closed" x="35" y="-120"></rect>
+    <rect class="frog__mouth--closed" x="-142" y="-40"></rect>
+  </g>
+</symbol>
+
+<symbol id="frog-random">
+  <g class="frog__random frog--shifted">
+    <rect x="-150" y="-115" rx="100px" width="300" height="300"></rect>
+    <circle r="40" cx="-60" cy="-110"></circle>
+    <circle r="40" cx="60" cy="-110"></circle>
+
+    <path class="frog__eye--excited" d="M -70 -125 a 50 50 0 0 1 30 20 a 70 50 0 0 0 -35 -2"/>
+    <path class="frog__eye--excited" d="M 70 -125 a 50 50 0 0 0 -30 20 a 70 50 0 0 1 35 -2"/>
+
+    <g class="frog__mouth--open">
+      <rect x="-125" y="-90" rx="110px" width="250" height="260" mask="url(#frog-mouth-mask)"></rect>
+      <rect x="-125" y="-90" rx="90px" width="250" height="200" mask="url(#frog-mouth-mask)"></rect>
+    </g>
+  </g>
+  <use href="#frog-nose" />
+</symbol>
+</svg>
+
