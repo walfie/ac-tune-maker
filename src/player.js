@@ -10,7 +10,7 @@ function Player(args) {
   this.oscillator = null;
 }
 
-const freqs = {
+const frequencies = {
   "g": 392.00,
   "a": 440.00,
   "b": 493.88,
@@ -26,7 +26,11 @@ const freqs = {
   "E": 1318.51,
 };
 
-const allNotes = Object.values(freqs);
+const allNotes = Object.keys(frequencies);
+const randomNote = () => {
+  const note = allNotes[Math.floor(Math.random() * allNotes.length)];
+  return { note, frequency: frequencies[note] };
+};
 
 Player.prototype.setDelay = function(value) {
   this.delay = value;
@@ -64,36 +68,39 @@ Player.prototype.play = function(notes, onNote, onStop) {
 
   const startTime = this.audioContext.currentTime;
   const { callbacks } = notes.split('').reduce((acc, currentNote) => {
-    let note = 0;
+    let note = currentNote;
+    let frequency = 0;
     switch (currentNote) {
       case "z":
-        note = 0;
+        frequency = 0;
         break;
       case "-":
-        note = acc.prevNote;
+        frequency = acc.prevFrequency;
         break;
       case "?":
-        note = allNotes[Math.floor(Math.random() * allNotes.length)];
+        const result = randomNote();
+        note = result.note;
+        frequency = result.frequency;
         break;
       default:
-        note = freqs[currentNote] || 0;
+        frequency = frequencies[currentNote] || 0;
         break;
     }
 
     // TODO: Callback
     const noteDelaySeconds = acc.noteNumber * this.delay;
-    osc.frequency.setValueAtTime(note, startTime + noteDelaySeconds);
+    osc.frequency.setValueAtTime(frequency, startTime + noteDelaySeconds);
 
     const cancelable = window.setTimeout(() => {
-      onNote && onNote({ index: acc.noteNumber, note: currentNote });
+      onNote && onNote({ index: acc.noteNumber, note });
     }, noteDelaySeconds * 1000);
 
     return {
-      prevNote: note,
+      prevFrequency: frequency,
       noteNumber: acc.noteNumber + 1,
       callbacks: [...acc.callbacks, cancelable],
     };
-  }, { prevNote: 0, noteNumber: 0, callbacks: [] });
+  }, { prevFrequency: 0, noteNumber: 0, callbacks: [] });
 
   osc.onended = () => {
     callbacks.forEach(window.clearTimeout);
