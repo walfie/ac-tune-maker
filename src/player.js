@@ -2,8 +2,8 @@ function Player(args) {
   args = args || {};
 
   // Delay in seconds
-  this.delay = args.delay || 0.2;
-  this.volume = args.volume || 0.1;
+  this.delay = args.delay || 0.22;
+  this.volume = args.volume || 0.15;
 
   this.audioContext = null;
   this.gainNode = null;
@@ -56,7 +56,6 @@ Player.prototype.play = function(notes, onNote, onStop) {
   }
 
   if (this.oscillator) {
-    // TODO: Callback for stop
     this.oscillator.stop();
     this.oscillator.disconnect(this.audioContext);
   }
@@ -75,7 +74,7 @@ Player.prototype.play = function(notes, onNote, onStop) {
         frequency = 0;
         break;
       case "-":
-        frequency = acc.prevFrequency;
+        frequency = null;
         break;
       case "?":
         const result = randomNote();
@@ -87,9 +86,15 @@ Player.prototype.play = function(notes, onNote, onStop) {
         break;
     }
 
-    // TODO: Callback
     const noteDelaySeconds = acc.noteNumber * this.delay;
-    osc.frequency.setValueAtTime(frequency, startTime + noteDelaySeconds);
+    if (frequency !== null) {
+      // If not a hold note, stop the previous note early
+      if (acc.noteNumber > 0) {
+        osc.frequency.setValueAtTime(0, startTime + noteDelaySeconds - this.delay * 0.3);
+      }
+
+      osc.frequency.setValueAtTime(frequency, startTime + noteDelaySeconds);
+    }
 
     const cancelable = window.setTimeout(() => {
       onNote && onNote({ index: acc.noteNumber, note });
