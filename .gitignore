@@ -1,4 +1,7 @@
+*.bs.js
+.bsb.lock
 .cache
+.merlin
 dist/
+lib/bs/
 node_modules/
-

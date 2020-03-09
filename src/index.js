@@ -30,3 +30,5 @@ document.querySelector("#stop").onclick = event => {
   player.stop();
 }
 
+const app = require('./App.ml').main(document.querySelector('#app'));
+
