@@ -4,7 +4,18 @@ html {
 }
 
 .ac-frog {
-  box-sizing: border-box;
-  width: 12.5%;
   padding: 5px;
+}
+
+.ac-frog-container {
+  display: flex;
+  flex-flow: column;
+  box-sizing: border-box;
+  padding: 5px;
+  width: 12.5%;
+}
+
+.ac-frogs {
+  display: flex;
+  flex-flow: row wrap;
 }
