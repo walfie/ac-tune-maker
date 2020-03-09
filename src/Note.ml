@@ -57,6 +57,11 @@ let note_of_char = function
   | _ -> None
 ;;
 
+let has_next = function
+  | Random -> false
+  | _ -> true
+;;
+
 let next_note = function
   | Rest -> Some Hold
   | Hold -> Some G
@@ -74,6 +79,11 @@ let next_note = function
   | D' -> Some E'
   | E' -> Some Random
   | Random -> None
+;;
+
+let has_previous = function
+  | Rest -> false
+  | _ -> true
 ;;
 
 let previous_note = function

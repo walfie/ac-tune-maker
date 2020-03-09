@@ -4,6 +4,7 @@ html {
 }
 
 .ac-frog {
-  width: 100px;
+  box-sizing: border-box;
+  width: 12.5%;
   padding: 5px;
 }
