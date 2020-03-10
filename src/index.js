@@ -11,24 +11,5 @@ const initFrogsSvg = () => {
 
 initFrogsSvg();
 
-const player = new Player();
-
-document.querySelector("#start").onclick = event => {
-  const notes = document.querySelector("#input").value;
-
-  const onNote = ({ index, note }) => {
-    console.log(`Playing note #${index}: ${note}`);
-  };
-  const onStop = () => {
-    console.log("Stopped playing");
-  };
-
-  player.play(notes, onNote, onStop);
-};
-
-document.querySelector("#stop").onclick = event => {
-  player.stop();
-}
-
 const app = require('./App.ml').main(document.querySelector('#app'));
 

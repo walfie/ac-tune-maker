@@ -14,6 +14,8 @@ end
 let player = Player.create ()
 
 type msg =
+  | Play
+  | Stop
   | UpdateNote of int * Note.note
   | UrlChange of Web.Location.location
 [@@bs.deriving { accessors }]
@@ -46,6 +48,15 @@ let update_at_index l index new_value =
 ;;
 
 let update model = function
+  | Play ->
+    let play_notes _ =
+      model.notes
+      |> List.map Note.string_of_note
+      |> String.concat ""
+      |> Player.play player
+    in
+    model, Cmd.call play_notes
+  | Stop -> model, Cmd.call (fun _ -> Player.stop player)
   | UrlChange location -> { model with route = locationToRoute location }, Cmd.none
   | UpdateNote (index, new_note) ->
     let play_note _ =
@@ -72,7 +83,13 @@ let view model =
       ; button [ disabled previous_disabled; on_previous ] [ text {js|▼|js} ]
       ]
   in
-  div [] [ div [ class' "ac-frogs" ] (model.notes |> List.mapi frog_note) ]
+  div
+    []
+    [ button [ onClick Play ] [ text "Play" ]
+    ; button [ onClick Stop ] [ text "Stop" ]
+    ; hr [] []
+    ; div [ class' "ac-frogs" ] (model.notes |> List.mapi frog_note)
+    ]
 ;;
 
 let main =
