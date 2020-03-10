@@ -59,11 +59,12 @@ let update model = function
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
   | UrlChange location -> { model with route = locationToRoute location }, Cmd.none
   | UpdateNote (index, new_note) ->
-    let play_note _ =
-      let note_string = Note.string_of_note new_note in
-      player |. Player.play note_string
-    in
     let new_notes = model.notes |. update_at_index index new_note in
+    let play_note _ =
+      match new_note with
+      | Note.Rest | Note.Hold | Note.Random -> ()
+      | _ -> player |. Player.play (Note.string_of_note new_note)
+    in
     { model with notes = new_notes }, Cmd.call play_note
 ;;
 
