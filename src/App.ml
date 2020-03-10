@@ -51,32 +51,20 @@ let update model = function
     { model with notes = update_at_index model.notes index value }, Cmd.none
 ;;
 
-module Option = struct
-  let is_some = function
-    | Some _ -> true
-    | None -> false
-  ;;
-
-  let fold default f = function
-    | Some x -> f x
-    | None -> default
-  ;;
-end
-
 let view model =
   let frog_note index note =
     let next_note = Note.next_note note in
     let previous_note = Note.previous_note note in
-    let has_next = Option.is_some next_note in
-    let has_previous = Option.is_some previous_note in
-    let update_note n = onClick (UpdateNote (index, n)) in
-    let on_next = Option.fold noProp update_note next_note in
-    let on_previous = Option.fold noProp update_note previous_note in
+    let next_disabled = Belt.Option.isNone next_note in
+    let previous_disabled = Belt.Option.isNone previous_note in
+    let update_note n = UpdateNote (index, n) |> onClick in
+    let on_next = next_note |. Belt.Option.mapWithDefault noProp update_note in
+    let on_previous = previous_note |. Belt.Option.mapWithDefault noProp update_note in
     div
       [ class' "ac-frog-container" ]
-      [ button [ (not has_next) |> disabled; on_next ] [ text {js|▲|js} ]
+      [ button [ disabled next_disabled; on_next ] [ text {js|▲|js} ]
       ; FrogSvg.frog_svg note
-      ; button [ (not has_previous) |> disabled; on_previous ] [ text {js|▼|js} ]
+      ; button [ disabled previous_disabled; on_previous ] [ text {js|▼|js} ]
       ]
   in
   div [] [ div [ class' "ac-frogs" ] (model.notes |> List.mapi frog_note) ]
