@@ -3,13 +3,28 @@ open Tea.App
 open Tea.Html
 open Tea.Html.Attributes
 
+module Player = struct
+  type player
+
+  external create : unit -> player = "default" [@@bs.module "./player"] [@@bs.new]
+  external stop : player -> unit = "stop" [@@bs.send]
+  external play : player -> string -> unit = "play" [@@bs.send]
+end
+
+let player = Player.create ()
+
 type msg =
-  | PreviousNote of int
-  | NextNote of int
+  | UpdateNote of int * Note.note
   | UrlChange of Web.Location.location
 [@@bs.deriving { accessors }]
 
 type route = Index
+
+(* List.init 16 (fun _ -> Note.Rest) *)
+let default_notes =
+  let open Note in
+  [ G; Hold; A; Hold; B; G; A; B; Hold; G; A; B; Hold; C; Hold; B ]
+;;
 
 type state =
   { route : route
@@ -22,34 +37,41 @@ let locationToRoute location =
 ;;
 
 let init () location =
-  ( { route = locationToRoute location; notes = List.init 16 (fun _ -> Note.Rest) }
-  , Cmd.none )
+  { route = locationToRoute location; notes = default_notes }, Cmd.none
 ;;
 
-let update_at_index f index l =
-  let maybe_f x =
-    match f x with
-    | Some x' -> x'
-    | None -> x
-  in
-  let maybe_replace i x = if i = index then maybe_f x else x in
-  List.mapi maybe_replace l
+let update_at_index l index new_value =
+  let replace i old_value = if i = index then new_value else old_value in
+  List.mapi replace l
 ;;
 
 let update model = function
   | UrlChange location -> { model with route = locationToRoute location }, Cmd.none
-  | PreviousNote index ->
-    { model with notes = update_at_index Note.previous_note index model.notes }, Cmd.none
-  | NextNote index ->
-    { model with notes = update_at_index Note.next_note index model.notes }, Cmd.none
+  | UpdateNote (index, value) ->
+    { model with notes = update_at_index model.notes index value }, Cmd.none
 ;;
+
+module Option = struct
+  let is_some = function
+    | Some _ -> true
+    | None -> false
+  ;;
+
+  let fold default f = function
+    | Some x -> f x
+    | None -> default
+  ;;
+end
 
 let view model =
   let frog_note index note =
-    let has_next = Note.has_next note in
-    let has_previous = Note.has_previous note in
-    let on_next = onClick (NextNote index) in
-    let on_previous = onClick (PreviousNote index) in
+    let next_note = Note.next_note note in
+    let previous_note = Note.previous_note note in
+    let has_next = Option.is_some next_note in
+    let has_previous = Option.is_some previous_note in
+    let update_note n = onClick (UpdateNote (index, n)) in
+    let on_next = Option.fold noProp update_note next_note in
+    let on_previous = Option.fold noProp update_note previous_note in
     div
       [ class' "ac-frog-container" ]
       [ button [ (not has_next) |> disabled; on_next ] [ text {js|▲|js} ]
