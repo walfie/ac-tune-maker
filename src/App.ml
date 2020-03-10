@@ -47,8 +47,13 @@ let update_at_index l index new_value =
 
 let update model = function
   | UrlChange location -> { model with route = locationToRoute location }, Cmd.none
-  | UpdateNote (index, value) ->
-    { model with notes = update_at_index model.notes index value }, Cmd.none
+  | UpdateNote (index, new_note) ->
+    let play_note _ =
+      let note_string = Note.string_of_note new_note in
+      player |. Player.play note_string
+    in
+    let new_notes = model.notes |. update_at_index index new_note in
+    { model with notes = new_notes }, Cmd.call play_note
 ;;
 
 let view model =

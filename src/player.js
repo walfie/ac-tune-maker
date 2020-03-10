@@ -3,7 +3,7 @@ function Player(args) {
 
   // Delay in seconds
   this.delay = args.delay || 0.22;
-  this.volume = args.volume || 0.15;
+  this.volume = args.volume || 0.1;
 
   this.audioContext = null;
   this.gainNode = null;
@@ -65,6 +65,8 @@ Player.prototype.play = function(notes, onNote, onStop) {
   osc.connect(this.gainNode);
   this.oscillator = osc;
 
+  // TODO: Currently the last note is longer than it should be
+  // Also if the first note is a hold, it is not silent
   const startTime = this.audioContext.currentTime;
   const { callbacks } = notes.split('').reduce((acc, currentNote) => {
     let note = currentNote;
