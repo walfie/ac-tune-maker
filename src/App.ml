@@ -127,7 +127,7 @@ let view model =
     ]
 ;;
 
-let subscriptions _ = Keyboard.pressed keyPressed
+let subscriptions _ = Sub.map keyPressed Keyboard.pressed
 
 let main =
   Tea.Navigation.navigationProgram

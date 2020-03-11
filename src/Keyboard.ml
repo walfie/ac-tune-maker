@@ -19,16 +19,15 @@ let decode_event =
   Decoder.field "keyCode" Decoder.int |> Decoder.map key_of_int
 ;;
 
-let pressed toMsg =
+let pressed =
   let open Vdom in
   let subscriptionId = "keyboard" in
   let eventId = "keydown" in
   let enableCall cb =
-    let fn e =
-      match Json.Decoder.decodeEvent decode_event e with
-      | Result.Error _ -> None
-      | Result.Ok None -> None
-      | Result.Ok (Some key) -> Some (toMsg key)
+    let fn event =
+      match Json.Decoder.decodeEvent decode_event event with
+      | Result.Ok (Some key) -> Some key
+      | _ -> None
     in
     let handler = EventHandlerCallback (subscriptionId, fn) in
     let doc = Web_node.document_node in
@@ -37,5 +36,5 @@ let pressed toMsg =
       let _ = eventHandler_Unregister doc eventId cache in
       ()
   in
-  Tea.Sub.registration "keyboard" enableCall
+  Tea.Sub.registration subscriptionId enableCall
 ;;
