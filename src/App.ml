@@ -4,11 +4,22 @@ open Tea.Html
 open Tea.Html.Attributes
 
 module Player = struct
+  type onNoteArgs =
+    { index : int
+    ; note : string
+    }
+
+  type onNote = onNoteArgs -> unit
+  type onStop = unit -> unit
   type player
 
   external create : unit -> player = "default" [@@bs.module "./player"] [@@bs.new]
   external stop : player -> unit = "stop" [@@bs.send]
-  external play : player -> string -> unit = "play" [@@bs.send]
+
+  external play : player -> string -> onNote:onNote -> onStop:onStop -> unit = "play"
+    [@@bs.send]
+
+  external play_no_callback : player -> string -> unit = "play" [@@bs.send]
 end
 
 let player = Player.create ()
@@ -16,6 +27,7 @@ let player = Player.create ()
 type msg =
   | Play
   | Stop
+  | PlayingNote of int option
   | UpdateNote of int * Note.note
   | UrlChange of Web.Location.location
 [@@bs.deriving { accessors }]
@@ -31,6 +43,8 @@ let default_notes =
 type state =
   { route : route
   ; notes : Note.note list
+  ; playing_note : int option
+  ; selected_note : int
   }
 
 let locationToRoute location =
@@ -39,7 +53,12 @@ let locationToRoute location =
 ;;
 
 let init () location =
-  { route = locationToRoute location; notes = default_notes }, Cmd.none
+  ( { route = locationToRoute location
+    ; notes = default_notes
+    ; playing_note = None
+    ; selected_note = 0
+    }
+  , Cmd.none )
 ;;
 
 let update_at_index l index new_value =
@@ -49,27 +68,31 @@ let update_at_index l index new_value =
 
 let update model = function
   | Play ->
-    let play_notes _ =
-      model.notes
-      |> List.map Note.string_of_note
-      |> String.concat ""
-      |> Player.play player
+    let notes_string = model.notes |> List.map Note.string_of_note |> String.concat "" in
+    let play_notes (cb : msg Vdom.applicationCallbacks ref) =
+      let on_stop () = !cb.enqueue (PlayingNote None) in
+      let on_note (args : Player.onNoteArgs) =
+        PlayingNote (Some args.index) |> !cb.enqueue
+      in
+      Player.play player notes_string ~onNote:on_note ~onStop:on_stop
     in
     model, Cmd.call play_notes
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
+  | PlayingNote maybe_index -> { model with playing_note = maybe_index }, Cmd.none
   | UrlChange location -> { model with route = locationToRoute location }, Cmd.none
   | UpdateNote (index, new_note) ->
     let new_notes = model.notes |. update_at_index index new_note in
     let play_note _ =
       match new_note with
       | Note.Rest | Note.Hold | Note.Random -> ()
-      | _ -> player |. Player.play (Note.string_of_note new_note)
+      | _ -> player |. Player.play_no_callback (Note.string_of_note new_note)
     in
     { model with notes = new_notes }, Cmd.call play_note
 ;;
 
 let view model =
   let frog_note index note =
+    let is_playing = model.playing_note = Some index in
     let next_note = Note.next_note note in
     let previous_note = Note.previous_note note in
     let next_disabled = Belt.Option.isNone next_note in
@@ -80,7 +103,7 @@ let view model =
     div
       [ class' "ac-frog-container" ]
       [ button [ disabled next_disabled; on_next ] [ text {js|▲|js} ]
-      ; FrogSvg.frog_svg note
+      ; FrogSvg.frog_svg note is_playing
       ; button [ disabled previous_disabled; on_previous ] [ text {js|▼|js} ]
       ]
   in

@@ -3,7 +3,7 @@ open Tea.Svg
 open Tea.Svg.Attributes
 open Note
 
-let frog_svg note =
+let frog_svg note is_playing =
   let note_href, note_class, note_text =
     match note with
     | Hold -> "#frog-hold", "frog__text", {js|—|js}
@@ -30,7 +30,8 @@ let frog_svg note =
     | E' -> 14, "#c336a0"
     | Random -> 15, "#f35fd2"
   in
-  let y_offset = string_of_int ((offset * -15) + 225) in
+  let playing_offset = if is_playing then -50 else 0 in
+  let y_offset = string_of_int ((offset * -15) + 225 + playing_offset) in
   svg
     [ class' "ac-frog"; viewBox "0 0 300 500" ]
     [ use [ href note_href; fill note_color; y y_offset ] []
