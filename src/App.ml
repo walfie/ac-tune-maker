@@ -1,7 +1,6 @@
 open Tea
 open Tea.App
 open Tea.Html
-open Tea.Html.Attributes
 
 module Player = struct
   type onNoteArgs =
@@ -28,6 +27,7 @@ type msg =
   | Play
   | Stop
   | Reset
+  | KeyPressed of Keyboard.key option
   | PlayingNote of int option
   | UpdateNote of int * Note.note
   | UrlChange of Web.Location.location
@@ -79,6 +79,15 @@ let update model = function
     model, Cmd.call play_notes
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
   | Reset -> { model with notes = List.init 16 (fun _ -> Note.Rest) }, Cmd.msg Stop
+  | KeyPressed None -> model, Cmd.none
+  | KeyPressed (Some key) ->
+    (match key with
+    | Keyboard.Up -> model, Cmd.none (* TODO *)
+    | Keyboard.Down -> model, Cmd.none (* TODO *)
+    | Keyboard.Left ->
+      { model with selected_note = max 0 (model.selected_note - 1) }, Cmd.none
+    | Keyboard.Right ->
+      { model with selected_note = min 15 (model.selected_note + 1) }, Cmd.none)
   | PlayingNote maybe_index -> { model with playing_note = maybe_index }, Cmd.none
   | UrlChange location -> { model with route = locationToRoute location }, Cmd.none
   | UpdateNote (index, new_note) ->
@@ -92,6 +101,7 @@ let update model = function
 ;;
 
 let view model =
+  let open Tea.Html.Attributes in
   let frog_note index note =
     let is_playing = model.playing_note = Some index in
     let next_note = Note.next_note note in
@@ -118,13 +128,10 @@ let view model =
     ]
 ;;
 
+let subscriptions _ = Keyboard.pressed keyPressed
+
 let main =
   Tea.Navigation.navigationProgram
     urlChange
-    { init
-    ; update
-    ; view
-    ; subscriptions = (fun _ -> Sub.none)
-    ; shutdown = (fun _ -> Cmd.none)
-    }
+    { init; update; view; subscriptions; shutdown = (fun _ -> Cmd.none) }
 ;;
