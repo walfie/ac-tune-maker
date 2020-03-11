@@ -27,6 +27,7 @@ let player = Player.create ()
 type msg =
   | Play
   | Stop
+  | Reset
   | PlayingNote of int option
   | UpdateNote of int * Note.note
   | UrlChange of Web.Location.location
@@ -34,7 +35,6 @@ type msg =
 
 type route = Index
 
-(* List.init 16 (fun _ -> Note.Rest) *)
 let default_notes =
   let open Note in
   [ G; Hold; A; Hold; B; G; A; B; Hold; G; A; B; Hold; C; Hold; B ]
@@ -78,6 +78,7 @@ let update model = function
     in
     model, Cmd.call play_notes
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
+  | Reset -> { model with notes = List.init 16 (fun _ -> Note.Rest) }, Cmd.msg Stop
   | PlayingNote maybe_index -> { model with playing_note = maybe_index }, Cmd.none
   | UrlChange location -> { model with route = locationToRoute location }, Cmd.none
   | UpdateNote (index, new_note) ->
@@ -111,6 +112,7 @@ let view model =
     []
     [ button [ onClick Play ] [ text "Play" ]
     ; button [ onClick Stop ] [ text "Stop" ]
+    ; button [ onClick Reset ] [ text "Reset" ]
     ; hr [] []
     ; div [ class' "ac-frogs" ] (model.notes |> List.mapi frog_note)
     ]
