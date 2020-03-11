@@ -27,7 +27,7 @@ type msg =
   | Play
   | Stop
   | Reset
-  | KeyPressed of Keyboard.key option
+  | KeyPressed of Keyboard.key
   | PlayingNote of int option
   | UpdateNote of int * Note.note
   | UrlChange of Web.Location.location
@@ -79,8 +79,7 @@ let update model = function
     model, Cmd.call play_notes
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
   | Reset -> { model with notes = List.init 16 (fun _ -> Note.Rest) }, Cmd.msg Stop
-  | KeyPressed None -> model, Cmd.none
-  | KeyPressed (Some key) ->
+  | KeyPressed key ->
     (match key with
     | Keyboard.Up -> model, Cmd.none (* TODO *)
     | Keyboard.Down -> model, Cmd.none (* TODO *)

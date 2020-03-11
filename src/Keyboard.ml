@@ -27,7 +27,8 @@ let pressed toMsg =
     let fn e =
       match Json.Decoder.decodeEvent decode_event e with
       | Result.Error _ -> None
-      | Result.Ok maybe_key -> Some (toMsg maybe_key)
+      | Result.Ok None -> None
+      | Result.Ok (Some key) -> Some (toMsg key)
     in
     let handler = EventHandlerCallback (subscriptionId, fn) in
     let doc = Web_node.document_node in
