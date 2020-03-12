@@ -16,26 +16,39 @@ type note =
   | E'
   | Random
 
-let char_of_note = function
-  | Rest -> 'z'
-  | Hold -> '-'
-  | G -> 'g'
-  | A -> 'a'
-  | B -> 'b'
-  | C -> 'c'
-  | D -> 'd'
-  | E -> 'e'
-  | F -> 'f'
-  | G' -> 'G'
-  | A' -> 'A'
-  | B' -> 'B'
-  | C' -> 'C'
-  | D' -> 'D'
-  | E' -> 'E'
-  | Random -> '?'
+type meta =
+  { index : int
+  ; as_str : string
+  ; color : string
+  ; next : note option
+  ; prev : note option
+  }
+
+let meta n =
+  let m index as_str color next prev = { index; as_str; color; next; prev } in
+  match n with
+  | Rest -> m 0 "z" "#aeadae" (Some Hold) None
+  | Hold -> m 1 "-" "#b063d5" (Some G) (Some Rest)
+  | G -> m 2 "g" "#b428d4" (Some A) (Some Hold)
+  | A -> m 3 "a" "#2689cf" (Some B) (Some G)
+  | B -> m 4 "b" "#0fb8d9" (Some C) (Some A)
+  | C -> m 5 "c" "#30e2a0" (Some D) (Some B)
+  | D -> m 6 "d" "#0cc408" (Some E) (Some C)
+  | E -> m 7 "e" "#88db08" (Some F) (Some D)
+  | F -> m 8 "f" "#f1d009" (Some G') (Some E)
+  | G' -> m 9 "G" "#f5a306" (Some A') (Some F)
+  | A' -> m 10 "A" "#eb6d04" (Some B') (Some G')
+  | B' -> m 11 "B" "#df5506" (Some C') (Some A')
+  | C' -> m 12 "C" "#ce2310" (Some D') (Some B')
+  | D' -> m 13 "D" "#d21e87" (Some E') (Some C')
+  | E' -> m 14 "E" "#c336a0" (Some Random) (Some D')
+  | Random -> m 15 "?" "#f35fd2" None (Some E')
 ;;
 
-let string_of_note note = char_of_note note |> String.make 1
+let next note = (meta note).next
+let prev note = (meta note).prev
+let color note = (meta note).color
+let string_of_note note = (meta note).as_str
 
 let note_of_char = function
   | 'z' -> Some Rest
@@ -62,45 +75,7 @@ let has_next = function
   | _ -> true
 ;;
 
-let next_note = function
-  | Rest -> Some Hold
-  | Hold -> Some G
-  | G -> Some A
-  | A -> Some B
-  | B -> Some C
-  | C -> Some D
-  | D -> Some E
-  | E -> Some F
-  | F -> Some G'
-  | G' -> Some A'
-  | A' -> Some B'
-  | B' -> Some C'
-  | C' -> Some D'
-  | D' -> Some E'
-  | E' -> Some Random
-  | Random -> None
-;;
-
 let has_previous = function
   | Rest -> false
   | _ -> true
-;;
-
-let previous_note = function
-  | Rest -> None
-  | Hold -> Some Rest
-  | G -> Some Hold
-  | A -> Some G
-  | B -> Some A
-  | C -> Some B
-  | D -> Some C
-  | E -> Some D
-  | F -> Some E
-  | G' -> Some F
-  | A' -> Some G'
-  | B' -> Some A'
-  | C' -> Some B'
-  | D' -> Some C'
-  | E' -> Some D'
-  | Random -> Some E'
 ;;

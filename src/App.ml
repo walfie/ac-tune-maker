@@ -103,8 +103,8 @@ let view model =
   let open Tea.Html.Attributes in
   let frog_note index note =
     let is_playing = model.playing_note = Some index in
-    let next_note = Note.next_note note in
-    let previous_note = Note.previous_note note in
+    let next_note = Note.prev note in
+    let previous_note = Note.prev note in
     let next_disabled = Belt.Option.isNone next_note in
     let previous_disabled = Belt.Option.isNone previous_note in
     let update_note n = UpdateNote (index, n) |> onClick in
