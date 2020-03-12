@@ -15,10 +15,10 @@ end
 type t
 
 val get : Index.t -> t -> Note.note
-val length : int
 val empty : t
+val default : t
+val length : int
 val from_string : string -> t
 val to_string : t -> string
-val default : t
 val update : Index.t -> Note.note -> t -> t
 val mapi : (Index.t -> Note.note -> 'a) -> t -> 'a list
