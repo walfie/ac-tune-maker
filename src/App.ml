@@ -4,7 +4,7 @@ open Tea.Html
 
 module Player = struct
   type onNoteArgs =
-    { index : int
+    { index : Tune.Index.t
     ; note : string
     }
 
@@ -27,42 +27,40 @@ type msg =
   | Play
   | Stop
   | Reset
-  | SelectNote of int
+  | SelectNote of Tune.Index.t
   | KeyPressed of Keyboard.key
-  | PlayingNote of int option
-  | UpdateNote of int * Note.note
-  | UpdateNotes of Note.note list
+  | PlayingNote of Tune.Index.t option
+  | UpdateNote of Tune.Index.t * Note.note
+  | UpdateTune of Tune.t
   | UrlChange of Web.Location.location
 [@@bs.deriving { accessors }]
 
 type route =
   | Index
-  | Tune of Note.note list
-
-let empty_notes = List.init 16 (fun _ -> Note.Rest)
-
-let default_notes =
-  let open Note in
-  [ G; Hold; A; Hold; B; G; A; B; Hold; G; A; B; Hold; C; Hold; B ]
-;;
+  | Tune of Tune.t
 
 type state =
   { route : route
   ; location : Web.Location.location
-  ; notes : Note.note list
-  ; playing_note : int option
-  ; selected_index : int
+  ; notes : Tune.t
+  ; playing_note : Tune.Index.t option
+  ; selected_index : Tune.Index.t
   }
 
 let locationToRoute location =
   match location.Web.Location.hash |> String.split_on_char '/' |> List.tl with
-  | [ "tune"; notes ] -> Tune (Note.notes_of_string notes)
+  | [ "tune"; notes ] -> Tune (Tune.from_string notes)
   | _ -> Index
 ;;
 
 let init () location =
   let route = locationToRoute location in
-  ( { route; notes = default_notes; playing_note = None; selected_index = 0; location }
+  ( { route
+    ; notes = Tune.default
+    ; playing_note = None
+    ; selected_index = Tune.Index.min
+    ; location
+    }
   , Cmd.msg (UrlChange location) )
 ;;
 
@@ -73,7 +71,7 @@ let update_at_index l index new_value =
 
 let update model = function
   | Play ->
-    let notes_string = model.notes |> List.map Note.string_of_note |> String.concat "" in
+    let notes_string = Tune.to_string model.notes in
     let play_notes (cb : msg Vdom.applicationCallbacks ref) =
       let on_stop () = !cb.enqueue (PlayingNote None) in
       let on_note (args : Player.onNoteArgs) =
@@ -83,14 +81,14 @@ let update model = function
     in
     model, Cmd.call play_notes
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
-  | Reset -> { model with notes = empty_notes }, Cmd.msg Stop
+  | Reset -> { model with notes = Tune.empty }, Cmd.msg Stop
   | SelectNote index -> { model with selected_index = index }, Cmd.none
-  | UpdateNotes notes -> { model with notes }, Cmd.none
+  | UpdateTune notes -> { model with notes }, Cmd.none
   | KeyPressed key ->
     let update_note_cmd model f =
       model.notes
-      |. Belt.List.get model.selected_index
-      |. Belt.Option.flatMap f
+      |> Tune.get model.selected_index
+      |> f
       |. Belt.Option.mapWithDefault Cmd.none (fun n ->
              Cmd.msg (updateNote model.selected_index n))
     in
@@ -98,20 +96,22 @@ let update model = function
     | Keyboard.Up -> model, update_note_cmd model Note.next
     | Keyboard.Down -> model, update_note_cmd model Note.prev
     | Keyboard.Left ->
-      { model with selected_index = max 0 (model.selected_index - 1) }, Cmd.none
+      ( { model with selected_index = Tune.Index.prev_bounded model.selected_index }
+      , Cmd.none )
     | Keyboard.Right ->
-      { model with selected_index = min 15 (model.selected_index + 1) }, Cmd.none)
+      ( { model with selected_index = Tune.Index.next_bounded model.selected_index }
+      , Cmd.none ))
   | PlayingNote maybe_index -> { model with playing_note = maybe_index }, Cmd.none
   | UrlChange location ->
     let route = locationToRoute location in
     let new_notes =
       match route with
       | Tune n -> n
-      | _ -> default_notes
+      | _ -> Tune.default
     in
-    { model with route; location }, Cmd.msg (UpdateNotes new_notes)
+    { model with route; location }, Cmd.msg (UpdateTune new_notes)
   | UpdateNote (index, new_note) ->
-    let new_notes = model.notes |. update_at_index index new_note in
+    let new_notes = model.notes |> Tune.update index new_note in
     let play_note _ =
       match new_note with
       | Note.Rest | Note.Hold | Note.Random -> ()
@@ -127,7 +127,7 @@ let view model =
     | None -> button [ onClick Play ] [ text "Play" ]
     | Some _ -> button [ onClick Stop ] [ text "Stop" ]
   in
-  let notes_as_string = Note.string_of_notes model.notes in
+  let notes_as_string = Tune.to_string model.notes in
   let new_hash = "#/tune/" ^ notes_as_string in
   let share_url =
     match model.location.hash with
@@ -162,7 +162,7 @@ let view model =
         ; input' [ class' "ac-share-url"; disabled true; value share_url ] []
         ]
     ; hr [] []
-    ; div [ class' "ac-frogs" ] (model.notes |> List.mapi frog_note)
+    ; div [ class' "ac-frogs" ] (model.notes |> Tune.mapi frog_note)
     ]
 ;;
 

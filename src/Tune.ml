@@ -1,4 +1,16 @@
-module Index = Tune_index
+module Index = struct
+  type t = int
+
+  let min = 0
+  let max = 15
+  let to_int i = i
+  let has_prev i = i >= 0
+  let has_next i = i < 16
+  let prev i = if has_prev i then Some (i - 1) else None
+  let next i = if has_next i then Some (i + 1) else None
+  let prev_bounded i = if has_prev i then i - 1 else i
+  let next_bounded i = if has_next i then i + 1 else i
+end
 
 type t = Note.note list
 
@@ -33,3 +45,5 @@ let update (index : Index.t) (new_value : Note.note) (l : t) =
   let replace i old_value = if i = index_as_int then new_value else old_value in
   List.mapi replace l
 ;;
+
+let mapi (f : Index.t -> Note.note -> 'a) (tune : t) : 'a list = List.mapi f tune
