@@ -110,17 +110,20 @@ let view model =
   let open Tea.Html.Attributes in
   let frog_note index note =
     let is_playing = model.playing_note = Some index in
-    let next_note = Note.prev note in
+    let next_note = Note.next note in
     let previous_note = Note.prev note in
     let next_disabled = Belt.Option.isNone next_note in
     let previous_disabled = Belt.Option.isNone previous_note in
     let update_note n = UpdateNote (index, n) |> onClick in
     let on_next = next_note |. Belt.Option.mapWithDefault noProp update_note in
     let on_previous = previous_note |. Belt.Option.mapWithDefault noProp update_note in
+    let is_selected =
+      Belt.Option.isNone model.playing_note && index = model.selected_index
+    in
     div
       [ class' "ac-frog-container" ]
       [ button [ disabled next_disabled; on_next ] [ text {js|▲|js} ]
-      ; FrogSvg.frog_svg note is_playing
+      ; FrogSvg.frog_svg note is_selected is_playing
       ; button [ disabled previous_disabled; on_previous ] [ text {js|▼|js} ]
       ]
   in
