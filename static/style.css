@@ -4,8 +4,16 @@ html {
   background-color: #eef8bf;
 }
 
+.ac-buttons {
+  display: flex;
+}
+
 .ac-frog {
-  padding: 5px;
+  padding: 1%;
+}
+
+.ac-share-url {
+  flex-grow: 1;
 }
 
 .ac-frog--selected {

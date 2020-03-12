@@ -50,25 +50,33 @@ let prev note = (meta note).prev
 let color note = (meta note).color
 let string_of_note note = (meta note).as_str
 
-let note_of_char = function
-  | 'z' -> Some Rest
-  | '-' -> Some Hold
-  | 'g' -> Some G
-  | 'a' -> Some A
-  | 'b' -> Some B
-  | 'c' -> Some C
-  | 'd' -> Some D
-  | 'e' -> Some E
-  | 'f' -> Some F
-  | 'G' -> Some G'
-  | 'A' -> Some A'
-  | 'B' -> Some B'
-  | 'C' -> Some C'
-  | 'D' -> Some D'
-  | 'E' -> Some E'
-  | '?' -> Some Random
+let from_char = function
+  | "z" -> Some Rest
+  | "-" -> Some Hold
+  | "g" -> Some G
+  | "a" -> Some A
+  | "b" -> Some B
+  | "c" -> Some C
+  | "d" -> Some D
+  | "e" -> Some E
+  | "f" -> Some F
+  | "G" -> Some G'
+  | "A" -> Some A'
+  | "B" -> Some B'
+  | "C" -> Some C'
+  | "D" -> Some D'
+  | "E" -> Some E'
+  | "?" -> Some Random
   | _ -> None
 ;;
+
+let notes_of_string str =
+  let get_or_rest c = from_char c |. Belt.Option.getWithDefault Rest in
+  Js.String.split "" str |> Array.map get_or_rest |> Array.to_list
+;;
+
+(* TODO: Ensure 16 notes *)
+let string_of_notes notes = notes |> List.map string_of_note |> String.concat ""
 
 let has_next = function
   | Random -> false

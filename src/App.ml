@@ -31,10 +31,15 @@ type msg =
   | KeyPressed of Keyboard.key
   | PlayingNote of int option
   | UpdateNote of int * Note.note
+  | UpdateNotes of Note.note list
   | UrlChange of Web.Location.location
 [@@bs.deriving { accessors }]
 
-type route = Index
+type route =
+  | Index
+  | Tune of Note.note list
+
+let empty_notes = List.init 16 (fun _ -> Note.Rest)
 
 let default_notes =
   let open Note in
@@ -43,6 +48,7 @@ let default_notes =
 
 type state =
   { route : route
+  ; location : Web.Location.location
   ; notes : Note.note list
   ; playing_note : int option
   ; selected_index : int
@@ -50,16 +56,14 @@ type state =
 
 let locationToRoute location =
   match location.Web.Location.hash |> String.split_on_char '/' |> List.tl with
+  | [ "tune"; notes ] -> Tune (Note.notes_of_string notes)
   | _ -> Index
 ;;
 
 let init () location =
-  ( { route = locationToRoute location
-    ; notes = default_notes
-    ; playing_note = None
-    ; selected_index = 0
-    }
-  , Cmd.none )
+  let route = locationToRoute location in
+  ( { route; notes = default_notes; playing_note = None; selected_index = 0; location }
+  , Cmd.msg (UrlChange location) )
 ;;
 
 let update_at_index l index new_value =
@@ -79,8 +83,9 @@ let update model = function
     in
     model, Cmd.call play_notes
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
-  | Reset -> { model with notes = List.init 16 (fun _ -> Note.Rest) }, Cmd.msg Stop
+  | Reset -> { model with notes = empty_notes }, Cmd.msg Stop
   | SelectNote index -> { model with selected_index = index }, Cmd.none
+  | UpdateNotes notes -> { model with notes }, Cmd.none
   | KeyPressed key ->
     let update_note_cmd model f =
       model.notes
@@ -97,7 +102,14 @@ let update model = function
     | Keyboard.Right ->
       { model with selected_index = min 15 (model.selected_index + 1) }, Cmd.none)
   | PlayingNote maybe_index -> { model with playing_note = maybe_index }, Cmd.none
-  | UrlChange location -> { model with route = locationToRoute location }, Cmd.none
+  | UrlChange location ->
+    let route = locationToRoute location in
+    let new_notes =
+      match route with
+      | Tune n -> n
+      | _ -> default_notes
+    in
+    { model with route; location }, Cmd.msg (UpdateNotes new_notes)
   | UpdateNote (index, new_note) ->
     let new_notes = model.notes |. update_at_index index new_note in
     let play_note _ =
@@ -114,6 +126,13 @@ let view model =
     match model.playing_note with
     | None -> button [ onClick Play ] [ text "Play" ]
     | Some _ -> button [ onClick Stop ] [ text "Stop" ]
+  in
+  let notes_as_string = Note.string_of_notes model.notes in
+  let new_hash = "#/tune/" ^ notes_as_string in
+  let share_url =
+    match model.location.hash with
+    | "" -> model.location.href ^ new_hash
+    | hash -> model.location.href |> Js.String.replace hash new_hash
   in
   let frog_note index note =
     let is_playing = model.playing_note = Some index in
@@ -136,8 +155,12 @@ let view model =
   in
   div
     []
-    [ play_pause
-    ; button [ onClick Reset ] [ text "Reset" ]
+    [ div
+        [ class' "ac-buttons" ]
+        [ play_pause
+        ; button [ onClick Reset ] [ text "Reset" ]
+        ; input' [ class' "ac-share-url"; disabled true; value share_url ] []
+        ]
     ; hr [] []
     ; div [ class' "ac-frogs" ] (model.notes |> List.mapi frog_note)
     ]
