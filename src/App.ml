@@ -27,6 +27,7 @@ type msg =
   | Play
   | Stop
   | Reset
+  | SelectNote of int
   | KeyPressed of Keyboard.key
   | PlayingNote of int option
   | UpdateNote of int * Note.note
@@ -79,6 +80,7 @@ let update model = function
     model, Cmd.call play_notes
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
   | Reset -> { model with notes = List.init 16 (fun _ -> Note.Rest) }, Cmd.msg Stop
+  | SelectNote index -> { model with selected_index = index }, Cmd.none
   | KeyPressed key ->
     let update_note_cmd model f =
       model.notes
@@ -121,7 +123,7 @@ let view model =
       Belt.Option.isNone model.playing_note && index = model.selected_index
     in
     div
-      [ class' "ac-frog-container" ]
+      [ class' "ac-frog-container"; onClick (SelectNote index) ]
       [ button [ disabled next_disabled; on_next ] [ text {js|▲|js} ]
       ; FrogSvg.frog_svg note is_selected is_playing
       ; button [ disabled previous_disabled; on_previous ] [ text {js|▼|js} ]
