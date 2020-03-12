@@ -44,7 +44,7 @@ type state =
   { route : route
   ; notes : Note.note list
   ; playing_note : int option
-  ; selected_note : int
+  ; selected_index : int
   }
 
 let locationToRoute location =
@@ -56,7 +56,7 @@ let init () location =
   ( { route = locationToRoute location
     ; notes = default_notes
     ; playing_note = None
-    ; selected_note = 0
+    ; selected_index = 0
     }
   , Cmd.none )
 ;;
@@ -80,13 +80,20 @@ let update model = function
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
   | Reset -> { model with notes = List.init 16 (fun _ -> Note.Rest) }, Cmd.msg Stop
   | KeyPressed key ->
+    let update_note_cmd model f =
+      model.notes
+      |. Belt.List.get model.selected_index
+      |. Belt.Option.flatMap f
+      |. Belt.Option.mapWithDefault Cmd.none (fun n ->
+             Cmd.msg (updateNote model.selected_index n))
+    in
     (match key with
-    | Keyboard.Up -> model, Cmd.none (* TODO *)
-    | Keyboard.Down -> model, Cmd.none (* TODO *)
+    | Keyboard.Up -> model, update_note_cmd model Note.next
+    | Keyboard.Down -> model, update_note_cmd model Note.prev
     | Keyboard.Left ->
-      { model with selected_note = max 0 (model.selected_note - 1) }, Cmd.none
+      { model with selected_index = max 0 (model.selected_index - 1) }, Cmd.none
     | Keyboard.Right ->
-      { model with selected_note = min 15 (model.selected_note + 1) }, Cmd.none)
+      { model with selected_index = min 15 (model.selected_index + 1) }, Cmd.none)
   | PlayingNote maybe_index -> { model with playing_note = maybe_index }, Cmd.none
   | UrlChange location -> { model with route = locationToRoute location }, Cmd.none
   | UpdateNote (index, new_note) ->
