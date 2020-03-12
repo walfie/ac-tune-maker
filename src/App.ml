@@ -110,6 +110,11 @@ let update model = function
 
 let view model =
   let open Tea.Html.Attributes in
+  let play_pause =
+    match model.playing_note with
+    | None -> button [ onClick Play ] [ text "Play" ]
+    | Some _ -> button [ onClick Stop ] [ text "Stop" ]
+  in
   let frog_note index note =
     let is_playing = model.playing_note = Some index in
     let next_note = Note.next note in
@@ -131,8 +136,7 @@ let view model =
   in
   div
     []
-    [ button [ onClick Play ] [ text "Play" ]
-    ; button [ onClick Stop ] [ text "Stop" ]
+    [ play_pause
     ; button [ onClick Reset ] [ text "Reset" ]
     ; hr [] []
     ; div [ class' "ac-frogs" ] (model.notes |> List.mapi frog_note)
