@@ -11,7 +11,51 @@ let classes classes =
   |> class'
 ;;
 
-let bg_svg _ = svg [ viewBox "0 0 3500 2050" ] [ use [ href "#bg" ] [] ]
+let frog_svg' note is_large =
+  let note_href, note_class, note_text =
+    match note with
+    | Hold -> "#frog-hold", "frog__text", {js|—|js}
+    | Rest -> "#frog-rest", "frog__text", ""
+    | Random -> "#frog-random", "frog__text frog__text--large", string_of_note Random
+    | other -> "#frog-normal", "frog__text", String.uppercase_ascii (string_of_note other)
+  in
+  let meta = Note.meta note in
+  let y_offset = string_of_int (meta.index * -15) in
+  g
+    [ classes [ "frog--large", is_large ] ]
+    [ g
+        [ class' "frog--unshifted" ]
+        [ use [ href note_href; fill meta.color; y y_offset ] []
+        ; text' [ class' note_class; y y_offset ] [ text note_text ]
+        ]
+    ]
+;;
+
+let bg_svg tune selected_index playing_index =
+  let make_frog index note =
+    frog_svg'
+      note
+      (match playing_index with
+      | None -> index = selected_index
+      | Some i -> index = i)
+  in
+  let top_row, bottom_row =
+    tune |> Tune.mapi make_frog |. Belt.List.splitAt 8 |. Belt.Option.getExn
+  in
+  let positioned_frog index frog =
+    let x = index * 345 in
+    g [ style {j|transform: translate($(x)px, 0px)|j} ] [ frog ]
+  in
+  svg
+    [ viewBox "0 0 3500 2050" ]
+    [ use [ href "#bg" ] []
+    ; g
+        [ class' "bg--shifted" ]
+        [ g [ class' "row__top" ] (top_row |> List.mapi positioned_frog)
+        ; g [ class' "row__bottom" ] (bottom_row |> List.mapi positioned_frog)
+        ]
+    ]
+;;
 
 let frog_svg note is_selected is_playing =
   let note_href, note_class, note_text =

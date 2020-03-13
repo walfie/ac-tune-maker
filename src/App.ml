@@ -43,7 +43,7 @@ type state =
   { route : route
   ; location : Web.Location.location
   ; tune : Tune.t
-  ; playing_note : Tune.Index.t option
+  ; playing_index : Tune.Index.t option
   ; selected_index : Tune.Index.t
   }
 
@@ -57,7 +57,7 @@ let init () location =
   let route = locationToRoute location in
   ( { route
     ; tune = Tune.default
-    ; playing_note = None
+    ; playing_index = None
     ; selected_index = Tune.Index.min
     ; location
     }
@@ -101,7 +101,7 @@ let update model = function
     | Keyboard.Right ->
       ( { model with selected_index = Tune.Index.next_bounded model.selected_index }
       , Cmd.none ))
-  | PlayingNote maybe_index -> { model with playing_note = maybe_index }, Cmd.none
+  | PlayingNote maybe_index -> { model with playing_index = maybe_index }, Cmd.none
   | UrlChange location ->
     let route = locationToRoute location in
     let new_tune =
@@ -123,7 +123,7 @@ let update model = function
 let view model =
   let open Tea.Html.Attributes in
   let play_pause =
-    match model.playing_note with
+    match model.playing_index with
     | None -> button [ onClick Play ] [ text "Play" ]
     | Some _ -> button [ onClick Stop ] [ text "Stop" ]
   in
@@ -135,7 +135,7 @@ let view model =
     | hash -> model.location.href |> Js.String.replace hash new_hash
   in
   let frog_note index note =
-    let is_playing = model.playing_note = Some index in
+    let is_playing = model.playing_index = Some index in
     let next_note = Note.next note in
     let previous_note = Note.prev note in
     let next_disabled = Belt.Option.isNone next_note in
@@ -144,7 +144,7 @@ let view model =
     let on_next = next_note |. Belt.Option.mapWithDefault noProp update_note in
     let on_previous = previous_note |. Belt.Option.mapWithDefault noProp update_note in
     let is_selected =
-      Belt.Option.isNone model.playing_note && index = model.selected_index
+      Belt.Option.isNone model.playing_index && index = model.selected_index
     in
     div
       [ class' "ac-frog-container"; onClick (SelectNote index) ]
@@ -155,16 +155,16 @@ let view model =
   in
   div
     []
-    [ div [ class' "ac-frogs" ] (model.tune |> Tune.mapi frog_note)
-    ; hr [] []
+    [ hr [] []
     ; div
         [ class' "ac-buttons" ]
         [ play_pause
         ; button [ onClick Reset ] [ text "Reset" ]
         ; input' [ class' "ac-share-url"; disabled true; value share_url ] []
         ]
+    ; div [] [ FrogSvg.bg_svg model.tune model.selected_index model.playing_index ]
     ; hr [] []
-    ; div [] [ FrogSvg.bg_svg () ]
+    ; div [ class' "ac-frogs" ] (model.tune |> Tune.mapi frog_note)
     ]
 ;;
 

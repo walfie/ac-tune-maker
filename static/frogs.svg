@@ -12,6 +12,10 @@
   transform: translate(1750px, 1100px);
 }
 
+.frog--large {
+  transform: scale(1.2);
+}
+
 .frog__eye,
 .frog__nose {
   fill: #3d2700;
@@ -54,6 +58,14 @@
 .frog__text--large {
   font-size: 160px;
   transform: translate(150px, 245px);
+}
+
+.row__top {
+  transform: translate(-1207.5px, -130px);
+}
+
+.row__bottom {
+  transform: translate(-1207.5px, 420px);
 }
 
 .bg__base {
