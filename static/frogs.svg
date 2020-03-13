@@ -63,6 +63,7 @@
 .bg__base--behind {
   stroke: #d9f492;
   stroke-width: 150px;
+  stroke-linejoin: round;
 }
 
 .bg__mouth {
@@ -159,6 +160,7 @@
 
 <symbol id="bg">
   <g class="bg--shifted">
+    <use href="#bg-notes" class="bg__base--behind"/>
     <use href="#bg-base" class="bg__base--behind" />
 
     <g id="bg-base">
@@ -181,35 +183,37 @@
     <line class="bg__line" x1="-1395" x2="1395"  y1="-273" y2="-273"/>
     <line class="bg__line" x1="-1395" x2="1395"  y1="-385" y2="-385"/>
 
-    <!-- lower -->
+    <!-- down -->
     <line class="bg__line" x1="-1395" x2="1395"  y1="160" y2="160"/>
     <line class="bg__line" x1="-1395" x2="1395"  y1="273" y2="273"/>
     <line class="bg__line" x1="-1395" x2="1395"  y1="385" y2="385"/>
 
-    <g class="bg__note" transform="translate(-1475 760) rotate(-14)">
-      <ellipse cx="0" cy="0" rx="70" ry="50" transform="translate(-100 5) rotate(-20)"></ellipse>
-      <ellipse cx="0" cy="0" rx="70" ry="50" transform="translate(100 5) rotate(-20)"></ellipse>
-      <rect x="-60" y="-250" rx="20" width="30" height="260"></rect>
-      <rect x="138" y="-250" rx="20" width="30" height="260"></rect>
-      <rect x="-60" y="-250" rx="20" width="225" height="80"></rect>
-    </g>
-
-    <g class="bg__note" transform="translate(1270 -755) rotate(-14) scale(0.8)">
-      <ellipse cx="0" cy="0" rx="75" ry="55" transform="translate(-95 5) rotate(-20)"></ellipse>
-      <rect x="-63" y="-235" rx="20" width="40" height="255"></rect>
-    </g>
-
-    <g class="bg__note" transform="translate(1550 -645) rotate(16) scale(1.2)">
-      <g id="bg-eighth-note">
-        <ellipse cx="0" cy="0" rx="70" ry="55" transform="translate(-100 5) rotate(-15)"></ellipse>
-        <rect x="-65" y="-215" rx="20" width="35" height="230"></rect>
-
-        <path d="M -35 -208 C 0 -160 130 -90 23 -25 C 30 -55 50 -50 -50 -130 z" />
+    <g id="bg-notes">
+      <g class="bg__note" transform="translate(-1475 760) rotate(-14)">
+        <ellipse cx="0" cy="0" rx="70" ry="50" transform="translate(-100 5) rotate(-20)"></ellipse>
+        <ellipse cx="0" cy="0" rx="70" ry="50" transform="translate(100 5) rotate(-20)"></ellipse>
+        <rect x="-60" y="-250" rx="20" width="30" height="260"></rect>
+        <rect x="138" y="-250" rx="20" width="30" height="260"></rect>
+        <rect x="-60" y="-250" rx="20" width="225" height="80"></rect>
       </g>
-    </g>
 
-    <g class="bg__note" transform="translate(-1010 790) rotate(15) scale(0.8)">
-      <use href="#bg-eighth-note" />
+      <g class="bg__note" transform="translate(1270 -755) rotate(-14) scale(0.8)">
+        <ellipse cx="0" cy="0" rx="75" ry="55" transform="translate(-95 5) rotate(-20)"></ellipse>
+        <rect x="-63" y="-235" rx="20" width="40" height="255"></rect>
+      </g>
+
+      <g class="bg__note" transform="translate(1550 -645) rotate(14) scale(1.2)" stroke-width="100">
+        <g id="bg-eighth-note">
+          <ellipse cx="0" cy="0" rx="70" ry="55" transform="translate(-100 5) rotate(-15)"></ellipse>
+          <rect x="-65" y="-215" rx="20" width="35" height="230"></rect>
+
+          <path d="M -35 -208 C 0 -160 130 -90 23 -25 C 30 -55 50 -50 -50 -130 z" />
+        </g>
+      </g>
+
+      <g class="bg__note" transform="translate(-1010 790) rotate(15) scale(0.8)" stroke-width="175">
+        <use href="#bg-eighth-note" />
+      </g>
     </g>
   <g>
 </symbol>

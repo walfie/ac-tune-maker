@@ -11,7 +11,7 @@ let classes classes =
   |> class'
 ;;
 
-let bg_svg _ = svg [ viewBox "0 0 3500 2000" ] [ use [ href "#bg" ] [] ]
+let bg_svg _ = svg [ viewBox "0 0 3500 2050" ] [ use [ href "#bg" ] [] ]
 
 let frog_svg note is_selected is_playing =
   let note_href, note_class, note_text =
