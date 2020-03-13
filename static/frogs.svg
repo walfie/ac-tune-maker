@@ -161,27 +161,14 @@
   <g class="bg--shifted">
     <use href="#bg-base" class="bg__base--behind" />
 
-    <!-- base -->
     <g id="bg-base">
       <ellipse class="bg__base" cx="525" cy="-860" rx="190" ry="140"></ellipse>
       <ellipse class="bg__base" cx="-525" cy="-860" rx="190" ry="140"></ellipse>
 
-      <path class="bg__base" d="
-      M 0 -870
-      C 1480 -870 1660 -870 1660 0
-      C 1660 810 1275 810 0 810
-      C -1275 810 -1660 810 -1660 0
-      C -1660 -870 -1480 -870 0 -870
-      z" />
+      <path class="bg__base" d="M 0 -870 C 1480 -870 1660 -870 1660 0 C 1660 810 1275 810 0 810 C -1275 810 -1660 810 -1660 0 C -1660 -870 -1480 -870 0 -870 z" />
     </g>
 
-    <path class="bg__mouth" d="
-    M 0 -700
-    C 1170 -700 1530 -760 1530 0
-    C 1530 695 1170 695 0 695
-    C -1170 695 -1530 695  -1530 0
-    C -1530 -760 -1170 -700 0 -700
-    z" />
+    <path class="bg__mouth" d="M 0 -700 C 1170 -700 1530 -760 1530 0 C 1530 695 1170 695 0 695 C -1170 695 -1530 695  -1530 0 C -1530 -760 -1170 -700 0 -700 z" />
 
     <ellipse class="bg__nose" cx="-35" cy="-780" rx="15" ry="10"></ellipse>
     <ellipse class="bg__nose" cx="35" cy="-780" rx="15" ry="10"></ellipse>
@@ -189,20 +176,17 @@
     <ellipse class="bg__eye" cx="-525" cy="-830" rx="85" ry="65"></ellipse>
     <ellipse class="bg__eye" cx="525" cy="-830" rx="85" ry="65"></ellipse>
 
-    <!-- up -->
+    <!-- upper -->
     <line class="bg__line" x1="-1395" x2="1395"  y1="-160" y2="-160"/>
     <line class="bg__line" x1="-1395" x2="1395"  y1="-273" y2="-273"/>
     <line class="bg__line" x1="-1395" x2="1395"  y1="-385" y2="-385"/>
 
-    <!-- down -->
+    <!-- lower -->
     <line class="bg__line" x1="-1395" x2="1395"  y1="160" y2="160"/>
     <line class="bg__line" x1="-1395" x2="1395"  y1="273" y2="273"/>
     <line class="bg__line" x1="-1395" x2="1395"  y1="385" y2="385"/>
 
     <g class="bg__note" transform="translate(-1475 760) rotate(-14)">
-      <line x1="-500" x2="500" y1="0" y2="0" />
-      <line y1="-500" y2="500" x1="0" x2="0" />
-
       <ellipse cx="0" cy="0" rx="70" ry="50" transform="translate(-100 5) rotate(-20)"></ellipse>
       <ellipse cx="0" cy="0" rx="70" ry="50" transform="translate(100 5) rotate(-20)"></ellipse>
       <rect x="-60" y="-250" rx="20" width="30" height="260"></rect>
@@ -210,6 +194,23 @@
       <rect x="-60" y="-250" rx="20" width="225" height="80"></rect>
     </g>
 
+    <g class="bg__note" transform="translate(1270 -755) rotate(-14) scale(0.8)">
+      <ellipse cx="0" cy="0" rx="75" ry="55" transform="translate(-95 5) rotate(-20)"></ellipse>
+      <rect x="-63" y="-235" rx="20" width="40" height="255"></rect>
+    </g>
+
+    <g class="bg__note" transform="translate(1550 -645) rotate(16) scale(1.2)">
+      <g id="bg-eighth-note">
+        <ellipse cx="0" cy="0" rx="70" ry="55" transform="translate(-100 5) rotate(-15)"></ellipse>
+        <rect x="-65" y="-215" rx="20" width="35" height="230"></rect>
+
+        <path d="M -35 -208 C 0 -160 130 -90 23 -25 C 30 -55 50 -50 -50 -130 z" />
+      </g>
+    </g>
+
+    <g class="bg__note" transform="translate(-1010 790) rotate(15) scale(0.8)">
+      <use href="#bg-eighth-note" />
+    </g>
   <g>
 </symbol>
 </svg>
