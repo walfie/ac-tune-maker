@@ -155,14 +155,16 @@ let view model =
   in
   div
     []
-    [ div
+    [ div [ class' "ac-frogs" ] (model.tune |> Tune.mapi frog_note)
+    ; hr [] []
+    ; div
         [ class' "ac-buttons" ]
         [ play_pause
         ; button [ onClick Reset ] [ text "Reset" ]
         ; input' [ class' "ac-share-url"; disabled true; value share_url ] []
         ]
     ; hr [] []
-    ; div [ class' "ac-frogs" ] (model.tune |> Tune.mapi frog_note)
+    ; div [] [ FrogSvg.bg_svg () ]
     ]
 ;;
 
