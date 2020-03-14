@@ -1,34 +1,23 @@
 html {
   height: 100%;
   width: 100%;
-  background-color: #eef8bf;
+  background-color: #7bc9c2;
+}
+
+body {
+  margin: 0;
+}
+
+.ac-main {
+  max-height: 90vh;
 }
 
 .ac-buttons {
   display: flex;
-}
-
-.ac-frog {
-  padding: 1%;
+  padding: 10px;
 }
 
 .ac-share-url {
   flex-grow: 1;
 }
 
-.ac-frog--selected {
-  background-color: white;
-}
-
-.ac-frog-container {
-  display: flex;
-  flex-flow: column;
-  box-sizing: border-box;
-  padding: 5px;
-  width: 12.5%;
-}
-
-.ac-frogs {
-  display: flex;
-  flex-flow: row wrap;
-}

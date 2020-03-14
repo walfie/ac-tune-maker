@@ -133,36 +133,15 @@ let view model =
     | "" -> model.location.href ^ new_hash
     | hash -> model.location.href |> Js.String.replace hash new_hash
   in
-  let frog_note index note =
-    let is_playing = model.playing_index = Some index in
-    let next_prev_button direction f str =
-      match f note with
-      | Some new_note ->
-        button [ disabled false; onClick (UpdateNote (index, direction)) ] [ text str ]
-      | None -> button [ disabled true ] [ text str ]
-    in
-    let is_selected =
-      Belt.Option.isNone model.playing_index && index = model.selected_index
-    in
-    div
-      [ class' "ac-frog-container"; onClick (SelectNote index) ]
-      [ next_prev_button Direction.Next Note.next {js|▲|js}
-      ; FrogSvg.frog_svg note is_selected is_playing
-      ; next_prev_button Direction.Prev Note.prev {js|▼|js}
-      ]
-  in
   div
     []
-    [ hr [] []
+    [ FrogSvg.bg_svg model.tune model.selected_index model.playing_index
     ; div
         [ class' "ac-buttons" ]
         [ play_pause
         ; button [ onClick Reset ] [ text "Reset" ]
         ; input' [ class' "ac-share-url"; disabled true; value share_url ] []
         ]
-    ; div [] [ FrogSvg.bg_svg model.tune model.selected_index model.playing_index ]
-    ; hr [] []
-    ; div [ class' "ac-frogs" ] (model.tune |> Tune.mapi frog_note)
     ]
 ;;
 

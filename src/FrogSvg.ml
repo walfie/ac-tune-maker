@@ -11,7 +11,7 @@ let classes classes =
   |> class'
 ;;
 
-let frog_svg' index note is_large is_selected =
+let frog_svg index note is_large is_selected =
   let note_href, note_class, note_text =
     match note with
     | Hold -> "#frog-hold", "frog__text", {js|—|js}
@@ -73,7 +73,7 @@ let bg_svg tune selected_index playing_index =
       | None -> index = selected_index
       | Some i -> index = i
     in
-    frog_svg' index note is_large (selected_index = index)
+    frog_svg index note is_large (selected_index = index)
   in
   let positioned_frog index frog =
     let x = index mod 8 * 345 in
@@ -89,26 +89,6 @@ let bg_svg tune selected_index playing_index =
     |> move_to_end (Tune.Index.to_int selected_index)
   in
   svg
-    [ viewBox "0 0 3500 2050" ]
+    [ class' "ac-main"; viewBox "0 0 3500 2050" ]
     [ use [ href "#bg" ] []; g [ class' "bg--shifted" ] frogs ]
-;;
-
-let frog_svg note is_selected is_playing =
-  let note_href, note_class, note_text =
-    match note with
-    | Hold -> "#frog-hold", "frog__text", {js|—|js}
-    | Rest -> "#frog-rest", "frog__text", ""
-    | Random -> "#frog-random", "frog__text frog__text--large", string_of_note Random
-    | other -> "#frog-normal", "frog__text", String.uppercase_ascii (string_of_note other)
-  in
-  let meta = Note.meta note in
-  let playing_offset = if is_playing then -50 else 0 in
-  let y_offset = string_of_int ((meta.index * -15) + 225 + playing_offset) in
-  svg
-    [ classes [ "ac-frog", true; "ac-frog--selected", is_selected ]
-    ; viewBox "0 0 300 500"
-    ]
-    [ use [ href note_href; fill meta.color; y y_offset ] []
-    ; text' [ class' note_class; y y_offset ] [ text note_text ]
-    ]
 ;;
