@@ -41,10 +41,18 @@ let to_string (tune : t) : string =
   |. Js.String.slice ~from:0 ~to_:length
 ;;
 
-let update (index : Index.t) (new_value : Note.note) (l : t) =
+let maybe_update_fn (index : Index.t) (f : Note.note -> Note.note option) (l : t) =
   let index_as_int = Index.to_int index in
-  let replace i old_value = if i = index_as_int then new_value else old_value in
+  let replace i old_value =
+    if i = index_as_int
+    then f old_value |. Belt.Option.getWithDefault old_value
+    else old_value
+  in
   List.mapi replace l
+;;
+
+let update (index : Index.t) (new_value : Note.note) (l : t) =
+  maybe_update_fn index (fun _ -> Some new_value) l
 ;;
 
 let mapi (f : Index.t -> Note.note -> 'a) (tune : t) : 'a list = List.mapi f tune

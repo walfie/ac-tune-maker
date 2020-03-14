@@ -74,16 +74,9 @@ let update model = function
   | SelectNote index -> { model with selected_index = index }, Cmd.none
   | UpdateTune tune -> { model with tune }, Cmd.none
   | KeyPressed key ->
-    let update_note_cmd model f =
-      model.tune
-      |> Tune.get model.selected_index
-      |> f
-      |. Belt.Option.mapWithDefault Cmd.none (fun n ->
-             Cmd.msg (updateNote model.selected_index n))
-    in
     (match key with
-    | Keyboard.Up -> model, update_note_cmd model Note.next
-    | Keyboard.Down -> model, update_note_cmd model Note.prev
+    | Keyboard.Up -> model, Cmd.msg (UpdateNote (model.selected_index, Direction.Next))
+    | Keyboard.Down -> model, Cmd.msg (UpdateNote (model.selected_index, Direction.Prev))
     | Keyboard.Left ->
       ( { model with selected_index = Tune.Index.prev_bounded model.selected_index }
       , Cmd.none )
@@ -99,14 +92,23 @@ let update model = function
       | _ -> Tune.default
     in
     { model with route; location }, Cmd.msg (UpdateTune new_tune)
-  | UpdateNote (index, new_note) ->
-    let new_tune = model.tune |> Tune.update index new_note in
-    let play_note _ =
-      match new_note with
-      | Note.Rest | Note.Hold | Note.Random -> ()
-      | _ -> player |. Player.play_no_callback (Note.string_of_note new_note)
+  | UpdateNote (index, direction) ->
+    let f =
+      match direction with
+      | Msg.Direction.Prev -> Note.prev
+      | Msg.Direction.Next -> Note.next
     in
-    { model with tune = new_tune }, Cmd.call play_note
+    let old_note = model.tune |> Tune.get index |> f in
+    (match old_note with
+    | None -> model, Cmd.none
+    | Some new_note ->
+      let new_tune = model.tune |> Tune.update index new_note in
+      let play_note _ =
+        match new_note with
+        | Note.Rest | Note.Hold | Note.Random -> ()
+        | _ -> player |. Player.play_no_callback (Note.string_of_note new_note)
+      in
+      { model with tune = new_tune }, Cmd.call play_note)
 ;;
 
 let view model =
@@ -125,21 +127,20 @@ let view model =
   in
   let frog_note index note =
     let is_playing = model.playing_index = Some index in
-    let next_note = Note.next note in
-    let previous_note = Note.prev note in
-    let next_disabled = Belt.Option.isNone next_note in
-    let previous_disabled = Belt.Option.isNone previous_note in
-    let update_note n = UpdateNote (index, n) |> onClick in
-    let on_next = next_note |. Belt.Option.mapWithDefault noProp update_note in
-    let on_previous = previous_note |. Belt.Option.mapWithDefault noProp update_note in
+    let next_prev_button direction f str =
+      match f note with
+      | Some new_note ->
+        button [ disabled false; onClick (UpdateNote (index, direction)) ] [ text str ]
+      | None -> button [ disabled true ] [ text str ]
+    in
     let is_selected =
       Belt.Option.isNone model.playing_index && index = model.selected_index
     in
     div
       [ class' "ac-frog-container"; onClick (SelectNote index) ]
-      [ button [ disabled next_disabled; on_next ] [ text {js|▲|js} ]
+      [ next_prev_button Direction.Next Note.next {js|▲|js}
       ; FrogSvg.frog_svg note is_selected is_playing
-      ; button [ disabled previous_disabled; on_previous ] [ text {js|▼|js} ]
+      ; next_prev_button Direction.Prev Note.prev {js|▼|js}
       ]
   in
   div

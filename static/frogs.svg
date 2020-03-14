@@ -126,6 +126,7 @@
 }
 </style>
 
+<defs>
 <symbol id="frog-base">
   <g class="frog__base frog--shifted">
     <ellipse cx="0" cy="0" rx="150" ry="120"></ellipse>
@@ -282,5 +283,6 @@
     </g>
   <g>
 </symbol>
+</defs>
 </svg>
 

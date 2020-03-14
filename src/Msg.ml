@@ -1,3 +1,9 @@
+module Direction = struct
+  type t =
+    | Prev
+    | Next
+end
+
 type t =
   | Play
   | Stop
@@ -5,7 +11,7 @@ type t =
   | SelectNote of Tune.Index.t
   | KeyPressed of Keyboard.key
   | PlayingNote of Tune.Index.t option
-  | UpdateNote of Tune.Index.t * Note.note
+  | UpdateNote of Tune.Index.t * Direction.t
   | UpdateTune of Tune.t
   | UrlChange of Web.Location.location
 [@@bs.deriving { accessors }]
