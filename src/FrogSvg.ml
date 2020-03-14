@@ -11,7 +11,7 @@ let classes classes =
   |> class'
 ;;
 
-let frog_svg' note is_large =
+let frog_svg' note is_large is_selected =
   let note_href, note_class, note_text =
     match note with
     | Hold -> "#frog-hold", "frog__text", {js|—|js}
@@ -21,23 +21,29 @@ let frog_svg' note is_large =
   in
   let meta = Note.meta note in
   let y_offset = string_of_int (meta.index * -15) in
+  let hand = if is_selected then use [ href "#hand"; y y_offset ] [] else noNode in
   g
-    [ classes [ "frog--large", is_large ] ]
+    []
     [ g
-        [ class' "frog--unshifted" ]
-        [ use [ href note_href; fill meta.color; y y_offset ] []
-        ; text' [ class' note_class; y y_offset ] [ text note_text ]
+        [ classes [ "frog--large", is_large ] ]
+        [ g
+            [ class' "frog--unshifted" ]
+            [ use [ href note_href; fill meta.color; y y_offset ] []
+            ; text' [ class' note_class; y y_offset ] [ text note_text ]
+            ]
         ]
+    ; hand
     ]
 ;;
 
 let bg_svg tune selected_index playing_index =
   let make_frog index note =
-    frog_svg'
-      note
-      (match playing_index with
+    let is_large =
+      match playing_index with
       | None -> index = selected_index
-      | Some i -> index = i)
+      | Some i -> index = i
+    in
+    frog_svg' note is_large (selected_index = index)
   in
   let top_row, bottom_row =
     tune |> Tune.mapi make_frog |. Belt.List.splitAt 8 |. Belt.Option.getExn
@@ -49,11 +55,12 @@ let bg_svg tune selected_index playing_index =
   svg
     [ viewBox "0 0 3500 2050" ]
     [ use [ href "#bg" ] []
-    ; use [ href "#hand" ] []
     ; g
         [ class' "bg--shifted" ]
-        [ g [ class' "row__top" ] (top_row |> List.mapi positioned_frog)
-        ; g [ class' "row__bottom" ] (bottom_row |> List.mapi positioned_frog)
+        (* Reversing the order here so the top left one gets rendered last,
+           to prevent overlaps. SVGs don't have z-indexes *)
+        [ g [ class' "row__bottom" ] (bottom_row |> List.mapi positioned_frog |> List.rev)
+        ; g [ class' "row__top" ] (top_row |> List.mapi positioned_frog |> List.rev)
         ]
     ]
 ;;

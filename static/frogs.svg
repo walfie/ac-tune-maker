@@ -68,12 +68,12 @@
   transform: translate(-1207.5px, 420px);
 }
 
-@keyframes upDown {
-  to { transform: translateY(30px) }
+.hand {
+  animation: upDown .5s alternate infinite ease-in-out;
 }
 
-.hand {
-  animation: upDown .8s alternate infinite ease-in-out;
+@keyframes upDown {
+  to { transform: translateY(25px) }
 }
 
 .hand__base {
@@ -187,7 +187,7 @@
 </symbol>
 
 <symbol id="hand">
-  <g transform="translate(20 20) rotate(-30)">
+  <g transform="translate(100 100) rotate(-30)">
     <g class="hand"">
       <path class="hand__base" d="
       M 0 -13
