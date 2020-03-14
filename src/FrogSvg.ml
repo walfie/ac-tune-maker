@@ -26,7 +26,7 @@ let frog_svg' index note is_large is_selected =
   in
   g
     [ class' "clickable"; onClick (Msg.SelectNote index) ]
-    [ rect [class' "frog__clickable-bg"] []
+    [ rect [ class' "frog__clickable-bg" ] []
     ; g
         [ classes [ "frog--large", is_large ] ]
         [ g

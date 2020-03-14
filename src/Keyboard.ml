@@ -26,7 +26,9 @@ let pressed =
   let enableCall cb =
     let fn event =
       match Json.Decoder.decodeEvent decode_event event with
-      | Result.Ok (Some key) -> Some key
+      | Result.Ok (Some key) ->
+        let _ = event##preventDefault () in
+        Some key
       | _ -> None
     in
     let handler = EventHandlerCallback (subscriptionId, fn) in
