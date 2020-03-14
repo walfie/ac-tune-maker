@@ -8,6 +8,14 @@
   transform: translate(-150px, -150px);
 }
 
+.triangle--shifted {
+  transform: translate(100px, 100px);
+}
+
+.triangle--unshifted {
+  transform: translate(-100px, -100px);
+}
+
 .bg--shifted {
   transform: translate(1750px, 1100px);
 }
@@ -17,7 +25,7 @@
 }
 
 .frog--large {
-  transform: scale(1.2);
+  transform: translate(0, 45px) scale(1.2);
 }
 
 .frog__eye,
@@ -84,12 +92,29 @@
   animation: upDown .5s alternate infinite ease-in-out;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .hand { animation: none; }
+@keyframes upDown {
+  to { transform: translateY(25px); }
 }
 
-@keyframes upDown {
-  to { transform: translateY(25px) }
+.triangle {
+  stroke: #f0af1c;
+  fill: #fad80a;
+  stroke-width: 25px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.triangle__bg:hover {
+  animation: enlarge .3s alternate infinite ease-in-out;
+}
+
+@keyframes enlarge {
+  to { transform: scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hand { animation: none; }
+  .triangle__bg { animation: none; }
 }
 
 .hand__base {
@@ -287,6 +312,23 @@
     </g>
   <g>
 </symbol>
+
+<symbol id="triangle">
+  <g class="triangle--shifted">
+    <rect x="-150" y="-100" width="300" height="150" fill="#ffffff00"></rect>
+    <path class="triangle" d="M -80 10 Q 0 -10 80 10 L 0 -70 z"></path>
+  </g>
+</symbol>
+
+<symbol id="triangle-up">
+  <g class="triangle__bg"><use href="#triangle"/></g>
+</symbol>
+
+<symbol id="triangle-down">
+  <g class="triangle__bg"><use href="#triangle" transform="scale(1 -1) translate(0 -150)" /></g>
+</symbol>
+
+
 </defs>
 </svg>
 

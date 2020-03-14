@@ -83,7 +83,7 @@ let has_next = function
   | _ -> true
 ;;
 
-let has_previous = function
+let has_prev = function
   | Rest -> false
   | _ -> true
 ;;
