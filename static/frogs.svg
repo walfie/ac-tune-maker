@@ -12,6 +12,10 @@
   transform: translate(1750px, 1100px);
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 .frog--large {
   transform: scale(1.2);
 }
@@ -58,6 +62,14 @@
 .frog__text--large {
   font-size: 160px;
   transform: translate(150px, 245px);
+}
+
+.frog__clickable-bg {
+  x: -150px;
+  y: -350px;
+  width: 300px;
+  height: 500px;
+  fill: #ffffff00;
 }
 
 .row__top {

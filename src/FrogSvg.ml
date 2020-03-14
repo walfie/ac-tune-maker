@@ -25,8 +25,9 @@ let frog_svg' index note is_large is_selected =
     if is_selected then use ~unique:"hand" [ href "#hand"; y y_offset ] [] else noNode
   in
   g
-    [ onClick (Msg.SelectNote index) ]
-    [ g
+    [ class' "clickable"; onClick (Msg.SelectNote index) ]
+    [ rect [class' "frog__clickable-bg"] []
+    ; g
         [ classes [ "frog--large", is_large ] ]
         [ g
             [ class' "frog--unshifted" ]
