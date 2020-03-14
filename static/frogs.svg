@@ -84,6 +84,10 @@
   animation: upDown .5s alternate infinite ease-in-out;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .hand { animation: none; }
+}
+
 @keyframes upDown {
   to { transform: translateY(25px) }
 }

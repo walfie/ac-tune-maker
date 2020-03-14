@@ -73,7 +73,7 @@ let update model = function
   | Reset -> { model with tune = Tune.empty }, Cmd.msg Stop
   | SelectNote index ->
     let cmd =
-      if model.selected_index = index
+      if model.playing_index <> None || model.selected_index = index
       then Cmd.none
       else Cmd.msg (model.tune |> Tune.get index |> playNote)
     in
