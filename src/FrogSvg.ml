@@ -49,6 +49,7 @@ let bg_svg tune selected_index playing_index =
   svg
     [ viewBox "0 0 3500 2050" ]
     [ use [ href "#bg" ] []
+    ; use [ href "#hand" ] []
     ; g
         [ class' "bg--shifted" ]
         [ g [ class' "row__top" ] (top_row |> List.mapi positioned_frog)

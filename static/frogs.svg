@@ -68,6 +68,22 @@
   transform: translate(-1207.5px, 420px);
 }
 
+@keyframes upDown {
+  to { transform: translateY(30px) }
+}
+
+.hand {
+  animation: upDown .8s alternate infinite ease-in-out;
+}
+
+.hand__base {
+  fill: white;
+  stroke-width: 6px;
+  stroke-linejoin: bevel;
+  stroke-linecap: round;
+  stroke: #43551b;
+}
+
 .bg__base {
   fill: #69ce2f;
 }
@@ -169,6 +185,31 @@
   </g>
   <use href="#frog-nose" />
 </symbol>
+
+<symbol id="hand">
+  <g transform="translate(20 20) rotate(-30)">
+    <g class="hand"">
+      <path class="hand__base" d="
+      M 0 -13
+      C 15 -15 20 0 18 55
+      C 18 20 55 37 45 58
+      C 45 30 80 45 70 67
+      C 75 40 100 60 93 80
+      Q 80 120 67 132
+      Q 80 150 65 155
+      Q 30 165 0 153
+      Q -18 145 2 130
+      Q -30 120 -32 100
+      Q -37 59 -12 60
+      C -25 0 -15 -13 0 -13
+      z"/>
+      <ellipse fill="#716e65" cx="35" cy="145" rx="30" ry="6"></ellipse>
+      <path class="hand__base" d="M 67 132 C 70 135 65 130 60 130" />
+      <path class="hand__base" d="M -12 60 Q -10 80 -12 83" />
+    </g>
+  </g
+</symbol>
+
 
 <symbol id="bg">
   <g class="bg--shifted">
