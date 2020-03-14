@@ -11,7 +11,7 @@ let classes classes =
   |> class'
 ;;
 
-let frog_svg' note is_large is_selected =
+let frog_svg' index note is_large is_selected =
   let note_href, note_class, note_text =
     match note with
     | Hold -> "#frog-hold", "frog__text", {js|—|js}
@@ -21,9 +21,11 @@ let frog_svg' note is_large is_selected =
   in
   let meta = Note.meta note in
   let y_offset = string_of_int (meta.index * -15) in
-  let hand = if is_selected then use [ href "#hand"; y y_offset ] [] else noNode in
+  let hand =
+    if is_selected then use ~unique:"hand" [ href "#hand"; y y_offset ] [] else noNode
+  in
   g
-    []
+    [ onClick (Msg.SelectNote index) ]
     [ g
         [ classes [ "frog--large", is_large ] ]
         [ g
@@ -43,7 +45,7 @@ let bg_svg tune selected_index playing_index =
       | None -> index = selected_index
       | Some i -> index = i
     in
-    frog_svg' note is_large (selected_index = index)
+    frog_svg' index note is_large (selected_index = index)
   in
   let top_row, bottom_row =
     tune |> Tune.mapi make_frog |. Belt.List.splitAt 8 |. Belt.Option.getExn

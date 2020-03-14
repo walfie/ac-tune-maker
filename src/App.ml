@@ -1,6 +1,7 @@
 open Tea
 open Tea.App
 open Tea.Html
+open Msg
 
 module Player = struct
   type onNoteArgs =
@@ -22,18 +23,6 @@ module Player = struct
 end
 
 let player = Player.create ()
-
-type msg =
-  | Play
-  | Stop
-  | Reset
-  | SelectNote of Tune.Index.t
-  | KeyPressed of Keyboard.key
-  | PlayingNote of Tune.Index.t option
-  | UpdateNote of Tune.Index.t * Note.note
-  | UpdateTune of Tune.t
-  | UrlChange of Web.Location.location
-[@@bs.deriving { accessors }]
 
 type route =
   | Index
@@ -72,7 +61,7 @@ let update_at_index l index new_value =
 let update model = function
   | Play ->
     let tune_string = Tune.to_string model.tune in
-    let play_tune (cb : msg Vdom.applicationCallbacks ref) =
+    let play_tune (cb : Msg.t Vdom.applicationCallbacks ref) =
       let on_stop () = !cb.enqueue (PlayingNote None) in
       let on_note (args : Player.onNoteArgs) =
         PlayingNote (Some args.index) |> !cb.enqueue
