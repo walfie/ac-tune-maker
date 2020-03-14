@@ -71,18 +71,24 @@ let update model = function
     model, Cmd.call play_tune
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
   | Reset -> { model with tune = Tune.empty }, Cmd.msg Stop
-  | SelectNote index -> { model with selected_index = index }, Cmd.none
+  | SelectNote index ->
+    let cmd =
+      if model.selected_index = index
+      then Cmd.none
+      else Cmd.msg (model.tune |> Tune.get index |> playNote)
+    in
+    { model with selected_index = index }, cmd
   | UpdateTune tune -> { model with tune }, Cmd.none
   | KeyPressed key ->
     (match key with
     | Keyboard.Up -> model, Cmd.msg (UpdateNote (model.selected_index, Direction.Next))
     | Keyboard.Down -> model, Cmd.msg (UpdateNote (model.selected_index, Direction.Prev))
     | Keyboard.Left ->
-      ( { model with selected_index = Tune.Index.prev_bounded model.selected_index }
-      , Cmd.none )
+      let index = Tune.Index.prev_bounded model.selected_index in
+      model, Cmd.msg (SelectNote index)
     | Keyboard.Right ->
-      ( { model with selected_index = Tune.Index.next_bounded model.selected_index }
-      , Cmd.none ))
+      let index = Tune.Index.next_bounded model.selected_index in
+      model, Cmd.msg (SelectNote index))
   | PlayingNote maybe_index -> { model with playing_index = maybe_index }, Cmd.none
   | UrlChange location ->
     let route = locationToRoute location in
@@ -103,12 +109,14 @@ let update model = function
     | None -> model, Cmd.none
     | Some new_note ->
       let new_tune = model.tune |> Tune.update index new_note in
-      let play_note _ =
-        match new_note with
-        | Note.Rest | Note.Hold | Note.Random -> ()
-        | _ -> player |. Player.play_no_callback (Note.string_of_note new_note)
-      in
-      { model with tune = new_tune }, Cmd.call play_note)
+      { model with tune = new_tune }, Cmd.msg (PlayNote new_note))
+  | PlayNote note ->
+    let play_note _ =
+      match note with
+      | Note.Rest | Note.Hold | Note.Random -> ()
+      | _ -> player |. Player.play_no_callback (Note.string_of_note note)
+    in
+    model, Cmd.call play_note
 ;;
 
 let view model =
