@@ -113,7 +113,7 @@ let update model = function
   | PlayNote note ->
     let play_note _ =
       match note with
-      | Note.Rest | Note.Hold | Note.Random -> ()
+      | Note.Rest | Note.Hold -> ()
       | _ -> player |. Player.play_no_callback (Note.string_of_note note)
     in
     model, Cmd.call play_note

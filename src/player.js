@@ -2,7 +2,7 @@ function Player(args) {
   args = args || {};
 
   // Delay in seconds
-  this.delay = args.delay || 0.22;
+  this.delay = args.delay || 0.25;
   this.volume = args.volume || 0.1;
 
   this.audioContext = null;
@@ -92,7 +92,7 @@ Player.prototype.play = function(notes, onNote, onStop) {
     if (frequency !== null) {
       // If not a hold note, stop the previous note early
       if (acc.noteNumber > 0) {
-        osc.frequency.setValueAtTime(0, startTime + noteDelaySeconds - this.delay * 0.3);
+        osc.frequency.setValueAtTime(0, startTime + noteDelaySeconds - this.delay * 0.4);
       }
 
       osc.frequency.setValueAtTime(frequency, startTime + noteDelaySeconds);
