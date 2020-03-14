@@ -36,7 +36,7 @@ let to_string (tune : t) : string =
   |. Js.String.slice ~from:0 ~to_:length
 ;;
 
-let default : t = from_string "CECGfGBDCz?zc--z"
+let default : t = from_string "CECGfGBDCzqzc--z"
 
 let maybe_update_fn (index : Index.t) (f : Note.note -> Note.note option) (l : t) =
   let index_as_int = Index.to_int index in

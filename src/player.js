@@ -78,7 +78,7 @@ Player.prototype.play = function(notes, onNote, onStop) {
       case "-":
         frequency = null;
         break;
-      case "?":
+      case "q": // Question mark
         const result = randomNote();
         note = result.note;
         frequency = result.frequency;

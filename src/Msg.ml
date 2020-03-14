@@ -7,7 +7,7 @@ end
 type t =
   | Play
   | Stop
-  | Reset
+  | Clear
   | SelectNote of Tune.Index.t
   | KeyPressed of Keyboard.key
   | PlayingNote of Tune.Index.t option

@@ -16,7 +16,7 @@ let frog_svg index note is_large is_selected =
     match note with
     | Hold -> "#frog-hold", "frog__text", {js|—|js}
     | Rest -> "#frog-rest", "frog__text", ""
-    | Random -> "#frog-random", "frog__text frog__text--large", string_of_note Random
+    | Random -> "#frog-random", "frog__text frog__text--large", "?"
     | other -> "#frog-normal", "frog__text", String.uppercase_ascii (string_of_note other)
   in
   let meta = Note.meta note in
@@ -28,15 +28,14 @@ let frog_svg index note is_large is_selected =
   let triangle direction =
     let href_value, offset, is_visible =
       match direction with
-      | Msg.Direction.Prev -> "#triangle-down", 290, Note.has_prev note
-      | Msg.Direction.Next -> "#triangle-up", -180, Note.has_next note
+      | Msg.Direction.Prev -> "#triangle-down", 240, Note.has_prev note
+      | Msg.Direction.Next -> "#triangle-up", -215, Note.has_next note
     in
     use
       [ href href_value
       ; class' "triangle--unshifted"
       ; display (if is_visible then "inline" else "none")
-      ; (* The 6/5 is a hack to counter the `scale(1.2)` on the `frog--large` class *)
-        (y_offset * 6 / 5) + offset |> string_of_int |> y
+      ; y_offset + offset |> string_of_int |> y
       ; onClick (Msg.updateNote index direction)
       ]
       []
@@ -46,11 +45,14 @@ let frog_svg index note is_large is_selected =
     [ class' "clickable"; onClick (Msg.SelectNote index) ]
     [ rect [ class' "frog__clickable-bg" ] []
     ; g
-        [ classes [ "frog--large", is_large ] ]
+        [ style {j|transform: translate(0, $(y_offset)px);|j} ]
         [ g
-            [ class' "frog--unshifted" ]
-            [ use [ href note_href; fill meta.color; y_offset_prop ] []
-            ; text' [ class' note_class; y_offset_prop ] [ text note_text ]
+            [ classes [ "frog--large", is_large ] ]
+            [ g
+                [ class' "frog--unshifted" ]
+                [ use [ href note_href; fill meta.color ] []
+                ; text' [ class' note_class ] [ text note_text ]
+                ]
             ]
         ]
     ; make_triangle Msg.Direction.Prev

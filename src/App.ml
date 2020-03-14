@@ -70,7 +70,7 @@ let update model = function
     in
     model, Cmd.call play_tune
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
-  | Reset -> { model with tune = Tune.empty }, Cmd.msg Stop
+  | Clear -> { model with tune = Tune.empty }, Cmd.msg Stop
   | SelectNote index ->
     let cmd =
       if model.playing_index <> None || model.selected_index = index
@@ -122,9 +122,12 @@ let update model = function
 let view model =
   let open Tea.Html.Attributes in
   let play_pause =
-    match model.playing_index with
-    | None -> button [ onClick Play ] [ text "Play" ]
-    | Some _ -> button [ onClick Stop ] [ text "Stop" ]
+    let msg, content =
+      match model.playing_index with
+      | None -> Play, {js|▶|js}
+      | Some _ -> Stop, {js|■|js}
+    in
+    button [ class' "ac-button"; onClick msg ] [ text content ]
   in
   let tune_string = Tune.to_string model.tune in
   let new_hash = "#/tune/" ^ tune_string in
@@ -139,7 +142,7 @@ let view model =
     ; div
         [ class' "ac-buttons" ]
         [ play_pause
-        ; button [ onClick Reset ] [ text "Reset" ]
+        ; button [ class' "ac-button"; onClick Clear ] [ text "Clear" ]
         ; input' [ class' "ac-share-url"; disabled true; value share_url ] []
         ]
     ]

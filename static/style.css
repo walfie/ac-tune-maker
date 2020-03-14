@@ -2,6 +2,7 @@ html {
   height: 100%;
   width: 100%;
   background-color: #7bc9c2;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
@@ -9,15 +10,38 @@ body {
 }
 
 .ac-main {
-  max-height: 90vh;
+  max-height: 85vh;
 }
 
 .ac-buttons {
   display: flex;
   padding: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.ac-button {
+  font-size: 25px;
+  border: 7px solid #d9f492;
+  border-radius: 100px;
+  padding: 15px;
+  margin: 0 5px 0 5px;
+  min-width: 120px;
+  background: #69ce2f;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.ac-button:hover {
+  background: #76da3d;
+  border-color: #edf8bf;
 }
 
 .ac-share-url {
   flex-grow: 1;
+  margin-left: 10px;
+  height: 30px;
 }
 

@@ -42,7 +42,7 @@ let meta n =
   | C' -> m 12 "C" "#ce2310" (Some D') (Some B')
   | D' -> m 13 "D" "#d21e87" (Some E') (Some C')
   | E' -> m 14 "E" "#c336a0" (Some Random) (Some D')
-  | Random -> m 15 "?" "#f35fd2" None (Some E')
+  | Random -> m 15 "q" "#f35fd2" None (Some E')
 ;;
 
 let next note = (meta note).next
@@ -66,7 +66,7 @@ let from_char = function
   | "C" -> Some C'
   | "D" -> Some D'
   | "E" -> Some E'
-  | "?" -> Some Random
+  | "q" -> Some Random
   | _ -> None
 ;;
 

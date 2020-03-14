@@ -25,7 +25,7 @@
 }
 
 .frog--large {
-  transform: translate(0, 45px) scale(1.2);
+  transform: scale(1.2);
 }
 
 .frog__eye,
