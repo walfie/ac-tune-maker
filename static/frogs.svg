@@ -233,7 +233,7 @@
 }
 
 .title_banner--rotated {
-  transform: translate(-1400px, -680px) rotate(-40deg);
+  transform: translate(-1400px, -645px) rotate(-40deg);
 }
 
 .title_banner--shifted {

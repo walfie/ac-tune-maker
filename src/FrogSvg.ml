@@ -102,14 +102,20 @@ let note_picker (current_note : Note.note option) (selected_index : Tune.Index.t
   g [ class' "note_picker" ] [ rect [ class' "note_picker__bg" ] []; g [] elems ]
 ;;
 
-let title_banner (title : string) (bounded : bool) =
+let title_banner (title : string) (maybe_bounded : bool option) =
+  let is_bounded, is_hidden =
+    match maybe_bounded with
+    | None -> false, true
+    | Some b -> b, false
+  in
   g
     [ class' "title_banner--rotated clickable"; onClick Msg.PromptTitle ]
     [ use [ href "#title-banner"; class' "title_banner--unshifted" ] []
     ; text'
         [ class' "title_banner__text js-title-text"
-        ; (if bounded then textLength "900" else noProp)
-        ; (if bounded then lengthAdjust "spacingAndGlyphs" else noProp)
+        ; (if is_hidden then style "visibility: hidden" else noProp)
+        ; (if is_bounded then textLength "900" else noProp)
+        ; (if is_bounded then lengthAdjust "spacingAndGlyphs" else noProp)
         ]
         [ text title ]
     ]
@@ -120,7 +126,7 @@ let bg_svg
     ~(selected_index : Tune.Index.t option)
     ~(playing_index : Tune.Index.t option)
     ~(title : string)
-    ~(title_bounded : bool)
+    ~(title_bounded : bool option)
   =
   let current_note = Belt.Option.map selected_index (fun n -> Tune.get n tune) in
   let make_frog index note =
@@ -149,7 +155,7 @@ let bg_svg
     selected_index |. Belt.Option.mapWithDefault noNode (note_picker current_note)
   in
   svg
-    [ class' "ac-main"; viewBox "0 0 3500 2100" ]
+    [ class' "ac-main"; viewBox "-200 0 3800 2100" ]
     [ use
         ~key:""
         [ href "#bg"; onClick (Msg.SelectNote None); pointerEvents "bounding-box" ]

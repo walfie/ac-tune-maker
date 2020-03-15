@@ -35,7 +35,7 @@ type state =
   { route : route
   ; location : Web.Location.location
   ; title : string
-  ; title_bounded : bool
+  ; title_bounded : bool option
   ; tune : Tune.t
   ; playing_index : Tune.Index.t option
   ; selected_index : Tune.Index.t option
@@ -52,10 +52,10 @@ let init () location =
   let route = locationToRoute location in
   ( { route
     ; tune = Tune.default
-    ; title = "My island tune" (* TODO *)
-    ; title_bounded = false
+    ; title = "Wild World Default Tune"
+    ; title_bounded = None
     ; playing_index = None
-    ; awaiting_frame = false
+    ; awaiting_frame = true
     ; selected_index = Some Tune.Index.min
     ; location
     }
@@ -88,7 +88,7 @@ let update model = function
     model, Cmd.call call_fn
   | BoundTitle title_bounded -> { model with title_bounded }, Cmd.none
   | UpdateTitle title ->
-    { model with title; title_bounded = false; awaiting_frame = true }, Cmd.none
+    { model with title; title_bounded = None; awaiting_frame = true }, Cmd.none
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
   | Clear -> { model with tune = Tune.empty }, Cmd.msg Stop
   | Randomize -> model, Cmd.msg (Tune.random () |> Msg.updateTune)
