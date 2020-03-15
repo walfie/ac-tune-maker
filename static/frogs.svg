@@ -24,6 +24,10 @@
   cursor: pointer;
 }
 
+.frog {
+  transition: transform 0.1s ease-out;
+}
+
 .frog--large {
   transform: scale(1.2);
 }
@@ -89,10 +93,10 @@
 }
 
 .hand {
-  animation: upDown .5s alternate infinite ease-in-out;
+  animation: hand .5s alternate infinite ease-in-out;
 }
 
-@keyframes upDown {
+@keyframes hand {
   to { transform: translateY(25px); }
 }
 
@@ -102,19 +106,17 @@
   stroke-width: 25px;
   stroke-linejoin: round;
   stroke-linecap: round;
+  animation: triangle 1s alternate infinite ease-in-out;
 }
 
-.triangle__bg:hover {
-  animation: enlarge .3s alternate infinite ease-in-out;
-}
-
-@keyframes enlarge {
-  to { transform: scale(1.1); }
+@keyframes triangle {
+  to { transform: translateY(-5px) scale(1.1); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hand { animation: none; }
-  .triangle__bg { animation: none; }
+  .triangle { animation: none; }
+  .frog { transition: none; }
 }
 
 .hand__base {

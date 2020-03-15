@@ -45,7 +45,7 @@ let frog_svg index note is_large is_selected =
     [ class' "clickable"; onClick (Msg.SelectNote index) ]
     [ rect [ class' "frog__clickable-bg" ] []
     ; g
-        [ style {j|transform: translate(0, $(y_offset)px);|j} ]
+        [ class' "frog"; style {j|transform: translate(0, $(y_offset)px);|j} ]
         [ g
             [ classes [ "frog--large", is_large ] ]
             [ g
