@@ -33,7 +33,7 @@ type state =
   ; location : Web.Location.location
   ; tune : Tune.t
   ; playing_index : Tune.Index.t option
-  ; selected_index : Tune.Index.t
+  ; selected_index : Tune.Index.t option
   }
 
 let locationToRoute location =
@@ -47,7 +47,7 @@ let init () location =
   ( { route
     ; tune = Tune.default
     ; playing_index = None
-    ; selected_index = Tune.Index.min
+    ; selected_index = Some Tune.Index.min
     ; location
     }
   , Cmd.msg (UrlChange location) )
@@ -72,24 +72,31 @@ let update model = function
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
   | Clear -> { model with tune = Tune.empty }, Cmd.msg Stop
   | Randomize -> model, Cmd.msg (Tune.random () |> Msg.updateTune)
-  | SelectNote index ->
+  | SelectNote None -> { model with selected_index = None }, Cmd.none
+  | SelectNote (Some index) ->
     let cmd =
-      if model.playing_index <> None || model.selected_index = index
+      if model.playing_index <> None || model.selected_index = Some index
       then Cmd.none
       else Cmd.msg (model.tune |> Tune.get index |> playNote)
     in
-    { model with selected_index = index }, cmd
+    { model with selected_index = Some index }, cmd
   | UpdateTune tune -> { model with tune }, Cmd.msg Stop
   | KeyPressed key ->
+    let maybe_update_note dir =
+      match model.selected_index with
+      | Some index -> Cmd.msg (UpdateNote (index, dir))
+      | None -> Cmd.none
+    in
+    let maybe_update_index default f =
+      match model.selected_index with
+      | Some selected -> Cmd.msg (SelectNote (Some (f selected)))
+      | None -> Cmd.msg (SelectNote (Some default))
+    in
     (match key with
-    | Keyboard.Up -> model, Cmd.msg (UpdateNote (model.selected_index, Direction.Next))
-    | Keyboard.Down -> model, Cmd.msg (UpdateNote (model.selected_index, Direction.Prev))
-    | Keyboard.Left ->
-      let index = Tune.Index.prev_bounded model.selected_index in
-      model, Cmd.msg (SelectNote index)
-    | Keyboard.Right ->
-      let index = Tune.Index.next_bounded model.selected_index in
-      model, Cmd.msg (SelectNote index))
+    | Keyboard.Up -> model, maybe_update_note Direction.Next
+    | Keyboard.Down -> model, maybe_update_note Direction.Prev
+    | Keyboard.Left -> model, maybe_update_index Tune.Index.max Tune.Index.prev_bounded
+    | Keyboard.Right -> model, maybe_update_index Tune.Index.min Tune.Index.next_bounded)
   | PlayingNote maybe_index -> { model with playing_index = maybe_index }, Cmd.none
   | UrlChange location ->
     let route = locationToRoute location in

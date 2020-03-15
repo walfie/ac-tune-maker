@@ -10,7 +10,7 @@ type t =
   | Stop
   | Clear
   | Randomize
-  | SelectNote of Tune.Index.t
+  | SelectNote of Tune.Index.t option
   | KeyPressed of Keyboard.key
   | PlayingNote of Tune.Index.t option
   | PlayNote of Note.note

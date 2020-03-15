@@ -11,7 +11,12 @@ let classes classes =
   |> class'
 ;;
 
-let frog_svg index note is_large is_selected =
+let frog_svg
+    (index : Tune.Index.t)
+    (note : Note.note)
+    (is_large : bool)
+    (is_selected : bool)
+  =
   let note_href, note_class, note_text =
     match note with
     | Hold -> "#frog-hold", "frog__text", {js|—|js}
@@ -30,6 +35,7 @@ let frog_svg index note is_large is_selected =
       match direction with
       | Msg.Direction.Prev -> "#triangle-down", 240, Note.has_prev note
       | Msg.Direction.Next -> "#triangle-up", -215, Note.has_next note
+      | _ -> "", 0, false
     in
     use
       [ href href_value
@@ -42,7 +48,7 @@ let frog_svg index note is_large is_selected =
   in
   let make_triangle direction = if is_selected then triangle direction else noNode in
   g
-    [ class' "clickable"; onClick (Msg.SelectNote index) ]
+    [ class' "clickable"; onClick (Msg.selectNote (Some index)) ]
     [ rect [ class' "frog__clickable-bg" ] []
     ; g
         [ class' "frog"; style {j|transform: translate(0, $(y_offset)px);|j} ]
@@ -64,17 +70,20 @@ let frog_svg index note is_large is_selected =
 (* SVGs don't use z-index, so we have to depend on ordering of elements to
  * determine what shows up at the top layer *)
 let move_to_end index input_list =
-  let l1, target :: l2 = input_list |. Belt.List.splitAt index |. Belt.Option.getExn in
-  List.concat [ l1; l2; [ target ] ]
+  match input_list |. Belt.List.splitAt index |. Belt.Option.getExn with
+  | l1, target :: l2 -> List.concat [ l1; l2; [ target ] ]
+  | _ -> input_list
 ;;
 
-let note_picker current_note selected_index =
+(* This should never happen *)
+
+let note_picker (current_note : Note.note option) selected_index =
   let to_elem note =
     let meta = Note.meta note in
     let x_pos = meta.index * 150 in
     let update_note = Msg.updateNote selected_index (Msg.Direction.Set note) in
     let current_indicator =
-      if current_note = note
+      if current_note = Some note
       then rect [ class' "note_picker__current"; fill meta.color ] []
       else noNode
     in
@@ -98,15 +107,16 @@ let note_picker current_note selected_index =
   g [ class' "note_picker" ] [ rect [ class' "note_picker__bg" ] []; g [] elems ]
 ;;
 
-let bg_svg tune selected_index playing_index =
-  let current_note = Tune.get selected_index tune in
+let bg_svg tune (selected_index : Tune.Index.t option) playing_index =
+  let current_note = Belt.Option.map selected_index (fun n -> Tune.get n tune) in
   let make_frog index note =
+    let is_selected = selected_index = Some index in
     let is_large =
       match playing_index with
-      | None -> index = selected_index
+      | None -> is_selected
       | Some i -> index = i
     in
-    frog_svg index note is_large (selected_index = index)
+    frog_svg index note is_large is_selected
   in
   let positioned_frog index frog =
     let x = index mod 8 * 345 in
@@ -115,16 +125,19 @@ let bg_svg tune selected_index playing_index =
     let uniq = {j|note$(index)|j} in
     g ~unique:uniq [ class' row; id uniq ] [ g [ style transform_str ] [ frog ] ]
   in
-  let frogs =
-    tune
-    |> Tune.mapi make_frog
-    |> List.mapi positioned_frog
-    |> move_to_end (Tune.Index.to_int selected_index)
+  let frogs = tune |> Tune.mapi make_frog |> List.mapi positioned_frog in
+  let ordered_frogs =
+    match selected_index with
+    | None -> frogs
+    | Some index -> frogs |> move_to_end (Tune.Index.to_int index)
+  in
+  let note_picker_elem =
+    selected_index |. Belt.Option.mapWithDefault noNode (note_picker current_note)
   in
   svg
     [ class' "ac-main"; viewBox "0 0 3500 2050" ]
     [ use [ href "#bg" ] []
-    ; g [ class' "bg--shifted" ] frogs
-    ; g [ class' "bg--shifted" ] [ note_picker current_note selected_index ]
+    ; g [ class' "bg--shifted" ] ordered_frogs
+    ; g [ class' "bg--shifted" ] [ note_picker_elem ]
     ]
 ;;
