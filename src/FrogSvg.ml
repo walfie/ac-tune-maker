@@ -78,28 +78,25 @@ let move_to_end index input_list =
 (* This should never happen *)
 
 let note_picker (current_note : Note.note option) selected_index =
+  let shadow = "filter:url(#note-picker-shadow)" in
   let to_elem note =
     let meta = Note.meta note in
     let x_pos = meta.index * 150 in
     let update_note = Msg.updateNote selected_index (Msg.Direction.Set note) in
+    let letter = if note = Note.Random then "?" else meta.as_str in
     let current_indicator =
       if current_note = Some note
       then rect [ class' "note_picker__current"; fill meta.color ] []
       else noNode
     in
-    let letter =
-      match note with
-      | Note.Random -> "?"
-      | _ -> meta.as_str
-    in
     g
       ~unique:letter
-      [ class' "note_picker__circle clickable"
+      [ class' "note_picker__container clickable"
       ; style {j|transform: translate($(x_pos)px, 0)|j}
       ; onClick update_note
       ]
-      [ circle [ fill meta.color; r "70" ] []
-      ; text' [ class' "note_picker__text" ] [ text letter ]
+      [ rect [ class' "note_picker__note"; fill meta.color; style shadow ] []
+      ; text' [ class' "note_picker__text"; style shadow ] [ text letter ]
       ; current_indicator
       ]
   in
@@ -139,7 +136,7 @@ let bg_svg
     selected_index |. Belt.Option.mapWithDefault noNode (note_picker current_note)
   in
   svg
-    [ class' "ac-main"; viewBox "0 0 3500 2050" ]
+    [ class' "ac-main"; viewBox "0 0 3500 2100" ]
     [ use [ href "#bg"; onClick (Msg.SelectNote None); pointerEvents "bounding-box" ] []
     ; g [ class' "bg--shifted" ] ordered_frogs
     ; g [ class' "bg--shifted" ] [ note_picker_elem ]

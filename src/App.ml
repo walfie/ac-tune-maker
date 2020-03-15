@@ -44,7 +44,12 @@ let locationToRoute location =
 
 let init () location =
   let route = locationToRoute location in
-  ( { route; tune = Tune.default; playing_index = None; selected_index = None; location }
+  ( { route
+    ; tune = Tune.default
+    ; playing_index = None
+    ; selected_index = Some Tune.Index.min
+    ; location
+    }
   , Cmd.msg (UrlChange location) )
 ;;
 

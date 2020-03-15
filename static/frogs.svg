@@ -114,17 +114,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hand { animation: none; }
-  .triangle { animation: none; }
-  .frog { transition: none; }
+  .hand, .triangle, .frog { animation: none; }
 }
 
 .hand__base {
   fill: white;
-  stroke-width: 6px;
+  stroke-width: 8px;
   stroke-linejoin: bevel;
   stroke-linecap: round;
-  stroke: #43551b;
+  stroke: #40422b;
 }
 
 .bg__base {
@@ -160,24 +158,41 @@
   transform: translate(-650px, 850px);
 }
 
+.note_picker__note {
+  width: 140px;
+  height: 140px;
+  rx: 55px;
+  transform: translate(-70px, -70px);
+  transition: all 0.1s ease-out;
+}
+
+.note_picker__note:hover {
+  rx: 40px;
+  width: 155px;
+  height: 155px;
+  transform: translate(-77.5px, -77.5px);
+}
+
 .note_picker__bg {
-  transform: translate(-90px, -90px);
-  width: 2450px;
-  height: 180px;
-  rx: 50px;
-  fill: #fef9e3bb;
+  transform: translate(-120px, -100px);
+  width: 2500px;
+  height: 210px;
+  rx: 100px;
+  fill: #f8f4eb;
 }
 
 .note_picker__current {
-  transform: translate(-50px, 75px);
+  transform: translate(-50px, 85px);
   width: 100px;
-  height: 10px;
+  height: 25px;
 }
 
 .note_picker__text {
+  pointer-events: none;
   user-select: none;
   fill: #f9fbe2;
   font-size: 100px;
+  mix-blend-mode: lighten;
   transform: translate(0, 35px);
   font-weight: bold;
   font-family: Helvetica, Arial, sans-serif;
@@ -282,7 +297,6 @@
   </g
 </symbol>
 
-
 <symbol id="bg">
   <g class="bg--shifted">
     <use href="#bg-notes" class="bg__base--behind"/>
@@ -358,6 +372,9 @@
   <g class="triangle__bg"><use href="#triangle" transform="scale(1 -1) translate(0 -150)" /></g>
 </symbol>
 
+<filter id="note-picker-shadow">
+  <feDropShadow dx="2" dy="12" stdDeviation="5" flood-opacity="0.3" />
+</filter>
 
 </defs>
 </svg>
