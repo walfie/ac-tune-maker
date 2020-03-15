@@ -71,6 +71,7 @@ let update model = function
     model, Cmd.call play_tune
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
   | Clear -> { model with tune = Tune.empty }, Cmd.msg Stop
+  | Randomize -> model, Cmd.msg (Tune.random () |> Msg.updateTune)
   | SelectNote index ->
     let cmd =
       if model.playing_index <> None || model.selected_index = index
@@ -78,7 +79,7 @@ let update model = function
       else Cmd.msg (model.tune |> Tune.get index |> playNote)
     in
     { model with selected_index = index }, cmd
-  | UpdateTune tune -> { model with tune }, Cmd.none
+  | UpdateTune tune -> { model with tune }, Cmd.msg Stop
   | KeyPressed key ->
     (match key with
     | Keyboard.Up -> model, Cmd.msg (UpdateNote (model.selected_index, Direction.Next))
@@ -143,6 +144,7 @@ let view model =
         [ class' "ac-buttons" ]
         [ play_pause
         ; button [ class' "ac-button"; onClick Clear ] [ text "Clear" ]
+        ; button [ class' "ac-button"; onClick Randomize ] [ text "Random" ]
         ; input' [ class' "ac-share-url"; disabled true; value share_url ] []
         ]
     ]

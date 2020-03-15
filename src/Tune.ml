@@ -17,6 +17,7 @@ type t = Note.note list
 let length = 16
 let get (i : Index.t) (tune : t) : Note.note = Belt.List.getExn tune (Index.to_int i)
 let empty : t = List.init length (fun _ -> Note.Rest)
+let random () : t = List.init length (fun _ -> Note.random ())
 
 let from_string (str : string) : t =
   let right_pad = length - String.length str |> max 0 in

@@ -23,3 +23,4 @@ val to_string : t -> string
 val update : Index.t -> Note.note -> t -> t
 val maybe_update_fn : Index.t -> (Note.note -> Note.note option) -> t -> t
 val mapi : (Index.t -> Note.note -> 'a) -> t -> 'a list
+val random : unit -> t

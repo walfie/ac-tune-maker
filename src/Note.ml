@@ -24,6 +24,9 @@ type meta =
   ; prev : note option
   }
 
+let all = [| Rest; Hold; G; A; B; C; D; E; F; G'; A'; B'; C'; D'; E'; Random |]
+let random () = Js.Array.length all |> Js.Math.random_int 0 |> Js.Array.unsafe_get all
+
 let meta n =
   let m index as_str color next prev = { index; as_str; color; next; prev } in
   match n with
