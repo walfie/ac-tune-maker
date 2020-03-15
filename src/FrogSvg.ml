@@ -40,7 +40,7 @@ let frog_svg
     use
       [ href href_value
       ; class' "triangle--unshifted"
-      ; display (if is_visible then "inline" else "none")
+      ; visibility (if is_visible then "visible" else "hidden")
       ; y_offset + offset |> string_of_int |> y
       ; onClick (Msg.updateNote index direction)
       ]
@@ -75,9 +75,7 @@ let move_to_end index input_list =
   | _ -> input_list
 ;;
 
-(* This should never happen *)
-
-let note_picker (current_note : Note.note option) selected_index =
+let note_picker (current_note : Note.note option) (selected_index : Tune.Index.t) =
   let shadow = "filter:url(#note-picker-shadow)" in
   let to_elem note =
     let meta = Note.meta note in
@@ -123,7 +121,7 @@ let bg_svg
     let x = index mod 8 * 345 in
     let transform_str = {j|transform: translate($(x)px, 0px)|j} in
     let row = if index < 8 then "row__top" else "row__bottom" in
-    let uniq = {j|note$(index)|j} in
+    let uniq = Js.String.make index in
     g ~unique:uniq [ class' row; id uniq ] [ g [ style transform_str ] [ frog ] ]
   in
   let frogs = tune |> Tune.mapi make_frog |> List.mapi positioned_frog in
@@ -137,8 +135,11 @@ let bg_svg
   in
   svg
     [ class' "ac-main"; viewBox "0 0 3500 2100" ]
-    [ use [ href "#bg"; onClick (Msg.SelectNote None); pointerEvents "bounding-box" ] []
+    [ use
+        ~key:""
+        [ href "#bg"; onClick (Msg.SelectNote None); pointerEvents "bounding-box" ]
+        []
     ; g [ class' "bg--shifted" ] ordered_frogs
-    ; g [ class' "bg--shifted" ] [ note_picker_elem ]
+    ; g ~key:(Js.String.make current_note) [ class' "bg--shifted" ] [ note_picker_elem ]
     ]
 ;;
