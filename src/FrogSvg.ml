@@ -140,7 +140,7 @@ let bg_svg
   in
   svg
     [ class' "ac-main"; viewBox "0 0 3500 2050" ]
-    [ use [ href "#bg" ] []
+    [ use [ href "#bg"; onClick (Msg.SelectNote None); pointerEvents "bounding-box" ] []
     ; g [ class' "bg--shifted" ] ordered_frogs
     ; g [ class' "bg--shifted" ] [ note_picker_elem ]
     ]
