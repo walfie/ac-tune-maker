@@ -68,7 +68,38 @@ let move_to_end index input_list =
   List.concat [ l1; l2; [ target ] ]
 ;;
 
+let note_picker current_note selected_index =
+  let to_elem note =
+    let meta = Note.meta note in
+    let x_pos = meta.index * 150 in
+    let update_note = Msg.updateNote selected_index (Msg.Direction.Set note) in
+    let current_indicator =
+      if current_note = note
+      then rect [ class' "note_picker__current"; fill meta.color ] []
+      else noNode
+    in
+    let letter =
+      match note with
+      | Note.Random -> "?"
+      | _ -> meta.as_str
+    in
+    g
+      ~unique:letter
+      [ class' "note_picker__circle clickable"
+      ; style {j|transform: translate($(x_pos)px, 0)|j}
+      ; onClick update_note
+      ]
+      [ circle [ fill meta.color; r "70" ] []
+      ; text' [ class' "note_picker__text" ] [ text letter ]
+      ; current_indicator
+      ]
+  in
+  let elems = Note.all |> Js.Array.map to_elem |> Array.to_list in
+  g [ class' "note_picker" ] [ rect [ class' "note_picker__bg" ] []; g [] elems ]
+;;
+
 let bg_svg tune selected_index playing_index =
+  let current_note = Tune.get selected_index tune in
   let make_frog index note =
     let is_large =
       match playing_index with
@@ -92,5 +123,8 @@ let bg_svg tune selected_index playing_index =
   in
   svg
     [ class' "ac-main"; viewBox "0 0 3500 2050" ]
-    [ use [ href "#bg" ] []; g [ class' "bg--shifted" ] frogs ]
+    [ use [ href "#bg" ] []
+    ; g [ class' "bg--shifted" ] frogs
+    ; g [ class' "bg--shifted" ] [ note_picker current_note selected_index ]
+    ]
 ;;

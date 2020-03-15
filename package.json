@@ -13,5 +13,8 @@
     "bucklescript-tea": "^0.14.0",
     "parcel-bundler": "^1.12.4"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "browserslist": [
+    "since 2017-06"
+  ]
 }

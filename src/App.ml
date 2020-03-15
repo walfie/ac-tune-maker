@@ -104,9 +104,10 @@ let update model = function
       match direction with
       | Msg.Direction.Prev -> Note.prev
       | Msg.Direction.Next -> Note.next
+      | Msg.Direction.Set n -> fun _ -> Some n
     in
-    let old_note = model.tune |> Tune.get index |> f in
-    (match old_note with
+    let maybe_new_note = model.tune |> Tune.get index |> f in
+    (match maybe_new_note with
     | None -> model, Cmd.none
     | Some new_note ->
       let new_tune = model.tune |> Tune.update index new_note in

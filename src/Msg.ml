@@ -2,6 +2,7 @@ module Direction = struct
   type t =
     | Prev
     | Next
+    | Set of Note.note
 end
 
 type t =
