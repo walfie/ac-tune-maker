@@ -107,7 +107,11 @@ let note_picker (current_note : Note.note option) selected_index =
   g [ class' "note_picker" ] [ rect [ class' "note_picker__bg" ] []; g [] elems ]
 ;;
 
-let bg_svg tune (selected_index : Tune.Index.t option) playing_index =
+let bg_svg
+    (tune : Tune.t)
+    (selected_index : Tune.Index.t option)
+    (playing_index : Tune.Index.t option)
+  =
   let current_note = Belt.Option.map selected_index (fun n -> Tune.get n tune) in
   let make_frog index note =
     let is_selected = selected_index = Some index in

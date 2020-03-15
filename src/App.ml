@@ -44,12 +44,7 @@ let locationToRoute location =
 
 let init () location =
   let route = locationToRoute location in
-  ( { route
-    ; tune = Tune.default
-    ; playing_index = None
-    ; selected_index = Some Tune.Index.min
-    ; location
-    }
+  ( { route; tune = Tune.default; playing_index = None; selected_index = None; location }
   , Cmd.msg (UrlChange location) )
 ;;
 
@@ -89,14 +84,14 @@ let update model = function
     in
     let maybe_update_index default f =
       match model.selected_index with
-      | Some selected -> Cmd.msg (SelectNote (Some (f selected)))
+      | Some selected -> Cmd.msg (SelectNote (f selected))
       | None -> Cmd.msg (SelectNote (Some default))
     in
     (match key with
     | Keyboard.Up -> model, maybe_update_note Direction.Next
     | Keyboard.Down -> model, maybe_update_note Direction.Prev
-    | Keyboard.Left -> model, maybe_update_index Tune.Index.max Tune.Index.prev_bounded
-    | Keyboard.Right -> model, maybe_update_index Tune.Index.min Tune.Index.next_bounded)
+    | Keyboard.Left -> model, maybe_update_index Tune.Index.max Tune.Index.prev
+    | Keyboard.Right -> model, maybe_update_index Tune.Index.min Tune.Index.next)
   | PlayingNote maybe_index -> { model with playing_index = maybe_index }, Cmd.none
   | UrlChange location ->
     let route = locationToRoute location in
