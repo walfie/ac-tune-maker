@@ -14,7 +14,7 @@
     "bucklescript-tea"
   ],
   "warnings": {
-    "error" : "+101"
+    "error": "+101+8"
   },
   "refmt": 3
 }

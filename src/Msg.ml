@@ -16,5 +16,9 @@ type t =
   | PlayNote of Note.note
   | UpdateNote of Tune.Index.t * Direction.t
   | UpdateTune of Tune.t
+  | PromptTitle
+  | BoundTitle of bool
+  | UpdateTitle of string
   | UrlChange of Web.Location.location
+  | AnimationFrame
 [@@bs.deriving { accessors }]

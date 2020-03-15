@@ -22,6 +22,9 @@ module Player = struct
   external play_no_callback : player -> string -> unit = "play" [@@bs.send]
 end
 
+external prompt : text:string -> default:string -> string option = "prompt"
+  [@@bs.val] [@@bs.scope "window"]
+
 let player = Player.create ()
 
 type route =
@@ -36,6 +39,7 @@ type state =
   ; tune : Tune.t
   ; playing_index : Tune.Index.t option
   ; selected_index : Tune.Index.t option
+  ; awaiting_frame : bool
   }
 
 let locationToRoute location =
@@ -51,6 +55,7 @@ let init () location =
     ; title = "My island tune" (* TODO *)
     ; title_bounded = false
     ; playing_index = None
+    ; awaiting_frame = false
     ; selected_index = Some Tune.Index.min
     ; location
     }
@@ -73,6 +78,17 @@ let update model = function
       Player.play player tune_string ~onNote:on_note ~onStop:on_stop
     in
     model, Cmd.call play_tune
+  | PromptTitle ->
+    let call_fn (cb : Msg.t Vdom.applicationCallbacks ref) =
+      let new_title = prompt ~text:"Choose a title" ~default:model.title in
+      match new_title with
+      | Some title -> !cb.enqueue (Msg.UpdateTitle title)
+      | None -> ()
+    in
+    model, Cmd.call call_fn
+  | BoundTitle title_bounded -> { model with title_bounded }, Cmd.none
+  | UpdateTitle title ->
+    { model with title; title_bounded = false; awaiting_frame = true }, Cmd.none
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
   | Clear -> { model with tune = Tune.empty }, Cmd.msg Stop
   | Randomize -> model, Cmd.msg (Tune.random () |> Msg.updateTune)
@@ -130,6 +146,14 @@ let update model = function
       | _ -> player |. Player.play_no_callback (Note.string_of_note note)
     in
     model, Cmd.call play_note
+  | AnimationFrame ->
+    let call_fn (cb : Msg.t Vdom.applicationCallbacks ref) =
+      let long_title =
+        [%raw {| document.querySelector(".js-title-text").getBBox().width > 900 |}]
+      in
+      !cb.enqueue (BoundTitle long_title)
+    in
+    { model with awaiting_frame = false }, Cmd.call call_fn
 ;;
 
 let view model =
@@ -167,7 +191,14 @@ let view model =
     ]
 ;;
 
-let subscriptions _ = Sub.map keyPressed Keyboard.pressed
+let subscriptions model =
+  Sub.batch
+    [ (if model.awaiting_frame
+      then Tea.AnimationFrame.every (fun _ -> AnimationFrame)
+      else Sub.NoSub)
+    ; Sub.map keyPressed Keyboard.pressed
+    ]
+;;
 
 let main =
   Tea.Navigation.navigationProgram

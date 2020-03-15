@@ -114,8 +114,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hand, .triangle, .frog { animation: none; }
+  .hand, .triangle, .frog { animation: none; transition: none; }
 }
+
+/* TODO: Reduce CPU usage of SVG animations */
+.hand, .triangle, .frog { animation: none; transition: none; }
 
 .hand__base {
   fill: white;

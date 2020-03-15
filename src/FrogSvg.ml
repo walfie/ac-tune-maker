@@ -104,10 +104,10 @@ let note_picker (current_note : Note.note option) (selected_index : Tune.Index.t
 
 let title_banner (title : string) (bounded : bool) =
   g
-    [ class' "title_banner--rotated" ]
+    [ class' "title_banner--rotated clickable"; onClick Msg.PromptTitle ]
     [ use [ href "#title-banner"; class' "title_banner--unshifted" ] []
     ; text'
-        [ class' "title_banner__text"
+        [ class' "title_banner__text js-title-text"
         ; (if bounded then textLength "900" else noProp)
         ; (if bounded then lengthAdjust "spacingAndGlyphs" else noProp)
         ]
