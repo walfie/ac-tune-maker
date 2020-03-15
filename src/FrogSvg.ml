@@ -102,10 +102,25 @@ let note_picker (current_note : Note.note option) (selected_index : Tune.Index.t
   g [ class' "note_picker" ] [ rect [ class' "note_picker__bg" ] []; g [] elems ]
 ;;
 
+let title_banner (title : string) (bounded : bool) =
+  g
+    [ class' "title_banner--rotated" ]
+    [ use [ href "#title-banner"; class' "title_banner--unshifted" ] []
+    ; text'
+        [ class' "title_banner__text"
+        ; (if bounded then textLength "900" else noProp)
+        ; (if bounded then lengthAdjust "spacingAndGlyphs" else noProp)
+        ]
+        [ text title ]
+    ]
+;;
+
 let bg_svg
-    (tune : Tune.t)
-    (selected_index : Tune.Index.t option)
-    (playing_index : Tune.Index.t option)
+    ~(tune : Tune.t)
+    ~(selected_index : Tune.Index.t option)
+    ~(playing_index : Tune.Index.t option)
+    ~(title : string)
+    ~(title_bounded : bool)
   =
   let current_note = Belt.Option.map selected_index (fun n -> Tune.get n tune) in
   let make_frog index note =
@@ -141,5 +156,6 @@ let bg_svg
         []
     ; g [ class' "bg--shifted" ] ordered_frogs
     ; g ~key:(Js.String.make current_note) [ class' "bg--shifted" ] [ note_picker_elem ]
+    ; g [ class' "bg--shifted" ] [ title_banner title title_bounded ]
     ]
 ;;

@@ -31,6 +31,8 @@ type route =
 type state =
   { route : route
   ; location : Web.Location.location
+  ; title : string
+  ; title_bounded : bool
   ; tune : Tune.t
   ; playing_index : Tune.Index.t option
   ; selected_index : Tune.Index.t option
@@ -46,6 +48,8 @@ let init () location =
   let route = locationToRoute location in
   ( { route
     ; tune = Tune.default
+    ; title = "My island tune" (* TODO *)
+    ; title_bounded = false
     ; playing_index = None
     ; selected_index = Some Tune.Index.min
     ; location
@@ -147,7 +151,12 @@ let view model =
   in
   div
     []
-    [ FrogSvg.bg_svg model.tune model.selected_index model.playing_index
+    [ FrogSvg.bg_svg
+        ~tune:model.tune
+        ~selected_index:model.selected_index
+        ~playing_index:model.playing_index
+        ~title:model.title
+        ~title_bounded:model.title_bounded
     ; div
         [ class' "ac-buttons" ]
         [ play_pause
