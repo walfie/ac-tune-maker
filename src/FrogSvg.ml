@@ -104,6 +104,7 @@ let note_picker (current_note : Note.note option) (selected_index : Tune.Index.t
 
 let title_banner (title : Msg.Title.t) =
   g
+    ~key:title.text
     [ class' "title_banner--rotated clickable"; onClick Msg.PromptTitle ]
     [ use [ href "#title-banner"; class' "title_banner--unshifted" ] []
     ; text'
@@ -154,7 +155,10 @@ let bg_svg
         [ href "#bg"; onClick (Msg.SelectNote None); pointerEvents "bounding-box" ]
         []
     ; g [ class' "bg--shifted" ] ordered_frogs
-    ; g ~key:(Js.String.make current_note) [ class' "bg--shifted" ] [ note_picker_elem ]
+    ; g
+        ~key:{j|$(selected_index)_$(current_note)|j}
+        [ class' "bg--shifted" ]
+        [ note_picker_elem ]
     ; g [ class' "bg--shifted" ] [ title_banner title ]
     ]
 ;;
