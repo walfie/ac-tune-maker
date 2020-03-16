@@ -3,7 +3,7 @@ function Player(args) {
 
   // Delay in seconds
   this.delay = args.delay || 0.25;
-  this.volume = args.volume || 0.1;
+  this.volume = args.volume || 0.125;
 
   this.audioContext = null;
   this.gainNode = null;
@@ -40,19 +40,33 @@ Player.prototype.setVolume = function(value) {
   this.volume = value;
 }
 
-Player.prototype.stop = function() {
-  if (this.oscillator) {
-    this.oscillator.stop();
+Player.prototype.stop = function(time) {
+  if (!this.audioContext) {
+    return;
   }
+
+  // Fade out the audio to prevent abruptly cutting off the sine wave which
+  // results in a "popping" sound
+  const fadeoutDuration = this.delay * 0.4;
+  const fadeoutStartTime = time ? (time - fadeoutDuration) : this.audioContext.currentTime;
+  const fadeoutStopTime = fadeoutStartTime + fadeoutDuration;
+
+  if (this.gainNode) {
+    const gain = this.gainNode.gain;
+    gain.setValueAtTime(gain.value, fadeoutStartTime);
+    gain.exponentialRampToValueAtTime(0.0001, fadeoutStopTime);
+  }
+
+  if (this.oscillator) { this.oscillator.stop(fadeoutStopTime); }
 }
 
 Player.prototype.play = function(notes, onNote, onStop) {
+  if (notes.length === 0) {
+    return;
+  }
+
   if (this.audioContext === null) {
     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-    this.gainNode = this.audioContext.createGain();
-    this.gainNode.connect(this.audioContext.destination);
-    this.gainNode.gain.value = this.volume;
   }
 
   if (this.oscillator) {
@@ -60,15 +74,30 @@ Player.prototype.play = function(notes, onNote, onStop) {
     this.oscillator.disconnect(this.audioContext);
   }
 
+  if (this.gainNode) {
+    this.gainNode.disconnect(this.audioContext);
+  }
+
+  const gainNode = this.audioContext.createGain();
+  gainNode.connect(this.audioContext.destination);
+  gainNode.gain.value = this.volume;
+  this.gainNode = gainNode;
+
   const osc = this.audioContext.createOscillator();
   osc.type = 'sine';
-  osc.connect(this.gainNode);
+  osc.connect(gainNode);
   this.oscillator = osc;
 
   // TODO: Currently the last note is longer than it should be
-  // Also if the first note is a hold, it is not silent
   const startTime = this.audioContext.currentTime;
-  const { callbacks } = notes.split('').reduce((acc, currentNote) => {
+
+  let notesArray = notes.split("");
+  if (notesArray[0] == ("-")) {
+    // Starting with a hold note makes no sense. Treat it as a rest.
+    notesArray[0] = "z";
+  }
+
+  const { callbacks } = notesArray.reduce((acc, currentNote) => {
     let note = currentNote;
     let frequency = 0;
     switch (currentNote) {
@@ -114,7 +143,9 @@ Player.prototype.play = function(notes, onNote, onStop) {
     onStop && onStop();
   };
   osc.start();
-  osc.stop(startTime + notes.length * this.delay);
+
+  const stopTime = startTime + notesArray.length * this.delay;
+  this.stop(stopTime);
 }
 
 export default Player;
