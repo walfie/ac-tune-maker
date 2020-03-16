@@ -22,7 +22,7 @@ module Player = struct
   external play_no_callback : player -> string -> unit = "play" [@@bs.send]
 end
 
-external prompt : text:string -> default:string -> string option = "prompt"
+external prompt : text:string -> default:string -> string Js.Nullable.t = "prompt"
   [@@bs.val] [@@bs.scope "window"]
 
 let player = Player.create ()
@@ -81,7 +81,7 @@ let update model = function
   | PromptTitle ->
     let call_fn (cb : Msg.t Vdom.applicationCallbacks ref) =
       let new_title = prompt ~text:"Choose a title" ~default:model.title in
-      match new_title with
+      match Js.Nullable.toOption new_title with
       | Some title -> !cb.enqueue (Msg.UpdateTitle title)
       | None -> ()
     in
