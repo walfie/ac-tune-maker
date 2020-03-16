@@ -189,7 +189,7 @@ let view model =
       | None -> Play, {js|▶|js}
       | Some _ -> Stop, {js|■|js}
     in
-    button [ class' "ac-button"; onClick msg ] [ text content ]
+    button [ class' "ac-button ac-button--play"; onClick msg ] [ text content ]
   in
   let tune_string = Tune.to_string model.tune in
   let encoded_title = Js.Global.encodeURIComponent model.title.text in
@@ -200,18 +200,25 @@ let view model =
     | hash -> model.location.href |> Js.String.replace hash new_hash
   in
   div
-    []
+    [ class' "ac-container" ]
     [ FrogSvg.bg_svg
         ~tune:model.tune
         ~selected_index:model.selected_index
         ~playing_index:model.playing_index
         ~title:model.title
     ; div
-        [ class' "ac-buttons" ]
-        [ play_pause
-        ; button [ class' "ac-button"; onClick Clear ] [ text "Clear" ]
-        ; button [ class' "ac-button"; onClick Randomize ] [ text "Random" ]
-        ; input' [ class' "ac-share-url"; disabled true; value share_url ] []
+        [ class' "ac-controls" ]
+        [ input' [ class' "ac-share-url"; disabled true; value share_url ] []
+        ; div
+            [ class' "ac-buttons" ]
+            [ play_pause
+            ; button
+                [ class' "ac-button ac-button--random"; onClick Randomize ]
+                [ text "Random" ]
+            ; button
+                [ class' "ac-button ac-button--delete"; onClick Clear ]
+                [ text "Clear" ]
+            ]
         ]
     ]
 ;;

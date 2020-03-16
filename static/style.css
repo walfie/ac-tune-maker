@@ -9,39 +9,83 @@ body {
   margin: 0;
 }
 
+.ac-container {
+  display: flex;
+  flex-direction: column;
+}
+
 .ac-main {
+  background-color: #baa584;
+  width: 100%;
   max-height: 85vh;
+  padding-bottom: 10px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle r='3' cx='10' cy='10' fill='%23ffffff88'/%3E%3Ccircle r='3' cx='30' cy='30' fill='%23ffffff88'/%3E%3C/svg%3E");
+}
+
+.ac-controls {
+  display: flex;
+  padding: 20px 0 20px 0;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap-reverse;
 }
 
 .ac-buttons {
   display: flex;
-  padding: 10px;
-  align-items: center;
-  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .ac-button {
-  font-size: 25px;
-  border: 7px solid #d9f492;
-  border-radius: 100px;
-  padding: 15px;
+  font-size: 20px;
+  border: 4px solid #ffffffbb;
+  border-radius: 30px;
+  padding: 10px;
   margin: 0 5px 0 5px;
-  min-width: 120px;
+  width: 120px;
+  height: 60px;
   background: #69ce2f;
   color: white;
   text-align: center;
   font-weight: bold;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.ac-button--play {
+  flex-grow: 1;
+  background: #34bda3;
+}
+
+.ac-button--play:hover {
+  color: #34bda3;
+}
+
+.ac-button--delete {
+  background: #6c6865;
+}
+.ac-button--delete:hover {
+  color: #6c6865;
+}
+
+.ac-button--random {
+  background: #e5cd9f;
+  color: #846836;
 }
 
 .ac-button:hover {
-  background: #76da3d;
-  border-color: #edf8bf;
+  border-color: #ffffffbb;
+  border-radius: 20px;
+  background: white;
 }
 
 .ac-share-url {
-  flex-grow: 1;
-  margin-left: 10px;
+  flex-shrink: 1;
+  margin: 10px;
+  width: 300px;
   height: 30px;
+  border-radius: 30px;
+  border: 4px solid #ffffffbb;
+  background: #fffbe5;
+  padding-left: 10px;
 }
 
