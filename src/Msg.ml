@@ -5,6 +5,13 @@ module Direction = struct
     | Set of Note.note
 end
 
+module Title = struct
+  type t =
+    { text : string
+    ; is_long : bool
+    }
+end
+
 type t =
   | Play
   | Stop
@@ -17,8 +24,6 @@ type t =
   | UpdateNote of Tune.Index.t * Direction.t
   | UpdateTune of Tune.t
   | PromptTitle
-  | BoundTitle of bool option
-  | UpdateTitle of string
+  | UpdateTitle of Title.t
   | UrlChange of Web.Location.location
-  | AnimationFrame
 [@@bs.deriving { accessors }]

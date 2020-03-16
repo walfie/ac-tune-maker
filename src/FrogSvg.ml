@@ -102,22 +102,16 @@ let note_picker (current_note : Note.note option) (selected_index : Tune.Index.t
   g [ class' "note_picker" ] [ rect [ class' "note_picker__bg" ] []; g [] elems ]
 ;;
 
-let title_banner (title : string) (maybe_bounded : bool option) =
-  let is_bounded, is_hidden =
-    match maybe_bounded with
-    | None -> false, true
-    | Some b -> b, false
-  in
+let title_banner (title : Msg.Title.t) =
   g
     [ class' "title_banner--rotated clickable"; onClick Msg.PromptTitle ]
     [ use [ href "#title-banner"; class' "title_banner--unshifted" ] []
     ; text'
-        [ class' "title_banner__text js-title-text"
-        ; (if is_hidden then style "visibility: hidden" else noProp)
-        ; (if is_bounded then textLength "900" else noProp)
-        ; (if is_bounded then lengthAdjust "spacingAndGlyphs" else noProp)
+        [ class' "title_banner__text"
+        ; (if title.is_long then textLength "900" else noProp)
+        ; (if title.is_long then lengthAdjust "spacingAndGlyphs" else noProp)
         ]
-        [ text title ]
+        [ text title.text ]
     ]
 ;;
 
@@ -125,8 +119,7 @@ let bg_svg
     ~(tune : Tune.t)
     ~(selected_index : Tune.Index.t option)
     ~(playing_index : Tune.Index.t option)
-    ~(title : string)
-    ~(title_bounded : bool option)
+    ~(title : Msg.Title.t)
   =
   let current_note = Belt.Option.map selected_index (fun n -> Tune.get n tune) in
   let make_frog index note =
@@ -162,6 +155,6 @@ let bg_svg
         []
     ; g [ class' "bg--shifted" ] ordered_frogs
     ; g ~key:(Js.String.make current_note) [ class' "bg--shifted" ] [ note_picker_elem ]
-    ; g [ class' "bg--shifted" ] [ title_banner title title_bounded ]
+    ; g [ class' "bg--shifted" ] [ title_banner title ]
     ]
 ;;

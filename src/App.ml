@@ -34,8 +34,7 @@ type route =
 type state =
   { route : route
   ; location : Web.Location.location
-  ; title : string
-  ; title_bounded : bool option
+  ; title : Msg.Title.t
   ; tune : Tune.t
   ; playing_index : Tune.Index.t option
   ; selected_index : Tune.Index.t option
@@ -48,23 +47,56 @@ let locationToRoute location =
   | _ -> Index
 ;;
 
+let update_at_index l index new_value =
+  let replace i old_value = if i = index then new_value else old_value in
+  List.mapi replace l
+;;
+
+module Document = struct
+  type document
+  type element
+
+  type bbox =
+    { width : float
+    ; height : float
+    }
+
+  external document : document = "" [@@bs.val]
+
+  (* This could technically return null, but we're only using this for `.js-title-text` *)
+  external querySelector : document -> string -> element = "" [@@bs.send]
+  external setInnerHTML : element -> string -> unit = "innerHTML" [@@bs.set]
+  external getBBox : element -> unit -> bbox = "getBBox" [@@bs.send]
+end
+
+(* The `text` element in an SVG allows you to force the text to fit in a
+ * specified size. However, we only want it constrained when the text is
+ * *larger* than the container. To do that, we have to set the text, then check
+ * the bounding box to see if the width is larger than our bounds, and if so,
+ * add the `textLength` and `lengthAdjust` properties. *)
+let update_title_call (new_title : string) (cb : Msg.t Vdom.applicationCallbacks ref) =
+  let open Document in
+  let elem = document |. querySelector ".js-title-text" in
+  let _ = elem |. setInnerHTML new_title in
+  let box = elem |. getBBox () in
+  let is_long = box.width > 900.0 in
+  Msg.UpdateTitle { text = new_title; is_long } |> !cb.enqueue
+;;
+
 let init () location =
   let route = locationToRoute location in
   ( { route
     ; tune = Tune.default
-    ; title = "Wild World Default Tune"
-    ; title_bounded = None
+    ; title = { text = ""; is_long = false }
     ; playing_index = None
     ; awaiting_frame = true
     ; selected_index = Some Tune.Index.min
     ; location
     }
-  , Cmd.msg (UrlChange location) )
-;;
-
-let update_at_index l index new_value =
-  let replace i old_value = if i = index then new_value else old_value in
-  List.mapi replace l
+  , Cmd.batch
+      [ Cmd.msg (UrlChange location)
+      ; Cmd.call (update_title_call "Wild World Default Tune")
+      ] )
 ;;
 
 let update model = function
@@ -80,15 +112,13 @@ let update model = function
     model, Cmd.call play_tune
   | PromptTitle ->
     let call_fn (cb : Msg.t Vdom.applicationCallbacks ref) =
-      let new_title = prompt ~text:"Choose a title" ~default:model.title in
+      let new_title = prompt ~text:"Choose a title" ~default:model.title.text in
       match Js.Nullable.toOption new_title with
-      | Some title -> !cb.enqueue (Msg.UpdateTitle title)
+      | Some title -> update_title_call title cb
       | None -> ()
     in
     model, Cmd.call call_fn
-  | BoundTitle title_bounded -> { model with title_bounded }, Cmd.none
-  | UpdateTitle title ->
-    { model with title; title_bounded = None; awaiting_frame = true }, Cmd.none
+  | UpdateTitle title -> { model with title }, Cmd.none
   | Stop -> model, Cmd.call (fun _ -> Player.stop player)
   | Clear -> { model with tune = Tune.empty }, Cmd.msg Stop
   | Randomize -> model, Cmd.msg (Tune.random () |> Msg.updateTune)
@@ -146,14 +176,6 @@ let update model = function
       | _ -> player |. Player.play_no_callback (Note.string_of_note note)
     in
     model, Cmd.call play_note
-  | AnimationFrame ->
-    let call_fn (cb : Msg.t Vdom.applicationCallbacks ref) =
-      let long_title =
-        [%raw {| document.querySelector(".js-title-text").getBBox().width > 900 |}]
-      in
-      !cb.enqueue (BoundTitle long_title)
-    in
-    { model with awaiting_frame = false }, Cmd.call call_fn
 ;;
 
 let view model =
@@ -180,7 +202,6 @@ let view model =
         ~selected_index:model.selected_index
         ~playing_index:model.playing_index
         ~title:model.title
-        ~title_bounded:model.title_bounded
     ; div
         [ class' "ac-buttons" ]
         [ play_pause
@@ -191,14 +212,7 @@ let view model =
     ]
 ;;
 
-let subscriptions model =
-  Sub.batch
-    [ (if model.awaiting_frame
-      then Tea.AnimationFrame.every (fun _ -> AnimationFrame)
-      else Sub.NoSub)
-    ; Sub.map keyPressed Keyboard.pressed
-    ]
-;;
+let subscriptions model = Sub.map keyPressed Keyboard.pressed
 
 let main =
   Tea.Navigation.navigationProgram

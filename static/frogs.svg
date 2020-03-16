@@ -241,6 +241,9 @@
 }
 </style>
 
+<!-- This is part of a hack used to determine whether the banner text should shrink to fit the container -->
+<text class="title_banner__text js-title-text" style="visibility: hidden;"></text>
+
 <defs>
 <symbol id="frog-base">
   <g class="frog__base frog--shifted">
