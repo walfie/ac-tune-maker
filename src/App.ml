@@ -29,7 +29,7 @@ let player = Player.create ()
 
 type route =
   | Index
-  | Tune of Tune.t
+  | Tune of Tune.t * string
 
 type state =
   { route : route
@@ -43,7 +43,8 @@ type state =
 
 let locationToRoute location =
   match location.Web.Location.hash |> String.split_on_char '/' |> List.tl with
-  | [ "tune"; tune ] -> Tune (Tune.from_string tune)
+  | [ "tune"; tune; title ] ->
+    Tune (Tune.from_string tune, Js.Global.decodeURIComponent title)
   | _ -> Index
 ;;
 
@@ -83,6 +84,8 @@ let update_title_call (new_title : string) (cb : Msg.t Vdom.applicationCallbacks
   Msg.UpdateTitle { text = new_title; is_long } |> !cb.enqueue
 ;;
 
+let default_title = "Default Tune"
+
 let init () location =
   let route = locationToRoute location in
   ( { route
@@ -93,10 +96,7 @@ let init () location =
     ; selected_index = Some Tune.Index.min
     ; location
     }
-  , Cmd.batch
-      [ Cmd.msg (UrlChange location)
-      ; Cmd.call (update_title_call "Wild World Default Tune")
-      ] )
+  , Cmd.batch [ Cmd.msg (UrlChange location) ] )
 ;;
 
 let update model = function
@@ -150,12 +150,15 @@ let update model = function
   | PlayingNote maybe_index -> { model with playing_index = maybe_index }, Cmd.none
   | UrlChange location ->
     let route = locationToRoute location in
-    let new_tune =
+    let new_tune, new_title =
       match route with
-      | Tune n -> n
-      | _ -> Tune.default
+      | Tune (tune, title) -> tune, title
+      | _ -> Tune.default, default_title
     in
-    { model with route; location }, Cmd.msg (UpdateTune new_tune)
+    let commands =
+      [ Cmd.call (update_title_call new_title); Cmd.msg (UpdateTune new_tune) ]
+    in
+    { model with route; location }, Cmd.batch commands
   | UpdateNote (index, direction) ->
     let f =
       match direction with
@@ -189,7 +192,8 @@ let view model =
     button [ class' "ac-button"; onClick msg ] [ text content ]
   in
   let tune_string = Tune.to_string model.tune in
-  let new_hash = "#/tune/" ^ tune_string in
+  let encoded_title = Js.Global.encodeURIComponent model.title.text in
+  let new_hash = {j|#/tune/$(tune_string)/$(encoded_title)|j} in
   let share_url =
     match model.location.hash with
     | "" -> model.location.href ^ new_hash
