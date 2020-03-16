@@ -153,11 +153,11 @@ let bg_svg
         ~key:""
         [ href "#bg"; onClick (Msg.SelectNote None); pointerEvents "bounding-box" ]
         []
+    ; g [ class' "bg--shifted" ] [ title_banner title ]
     ; g [ class' "bg--shifted" ] ordered_frogs
     ; g
         ~key:{j|$(selected_index)_$(current_note)|j}
         [ class' "bg--shifted" ]
         [ note_picker_elem ]
-    ; g [ class' "bg--shifted" ] [ title_banner title ]
     ]
 ;;

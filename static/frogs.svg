@@ -26,10 +26,10 @@ text {
 
 .clickable {
   cursor: pointer;
+  pointer-events: bounding-box;
 }
 
 .frog {
-  pointer-events: bounding-box;
   transition: transform 0.1s ease-out;
 }
 
@@ -410,7 +410,7 @@ text {
 
 <symbol id="triangle">
   <g class="triangle--shifted">
-    <rect x="-150" y="-130" width="300" height="180" fill="none"></rect>
+    <rect x="-160" y="-130" width="320" height="180" fill="none"></rect>
     <path class="triangle" d="M -80 10 Q 0 -10 80 10 L 0 -70 z"></path>
   </g>
 </symbol>
