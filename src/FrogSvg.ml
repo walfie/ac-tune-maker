@@ -76,7 +76,6 @@ let move_to_end index input_list =
 ;;
 
 let note_picker (current_note : Note.note option) (selected_index : Tune.Index.t) =
-  let shadow = "filter:url(#note-picker-shadow)" in
   let to_elem note =
     let meta = Note.meta note in
     let x_pos = meta.index * 150 in
@@ -93,8 +92,8 @@ let note_picker (current_note : Note.note option) (selected_index : Tune.Index.t
       ; style {j|transform: translate($(x_pos)px, 0)|j}
       ; onClick update_note
       ]
-      [ rect [ class' "note_picker__note"; fill meta.color; style shadow ] []
-      ; text' [ class' "note_picker__text"; style shadow ] [ text letter ]
+      [ rect [ class' "note_picker__note"; fill meta.color ] []
+      ; text' [ class' "note_picker__text" ] [ text letter ]
       ; current_indicator
       ]
   in

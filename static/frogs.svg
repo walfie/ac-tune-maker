@@ -1,5 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">
 <style>
+text {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
 .frog--shifted {
   transform: translate(150px, 150px);
 }
@@ -66,7 +70,6 @@
   fill: #3d2700;
   font-size: 135px;
   font-weight: bold;
-  font-family: Helvetica, Arial, sans-serif;
   text-anchor: middle;
   transform: translate(150px, 215px);
 }
@@ -117,8 +120,8 @@
   .hand, .triangle, .frog { animation: none; transition: none; }
 }
 
-/* TODO: Reduce CPU usage of SVG animations */
-.hand, .triangle, .frog { animation: none; transition: none; }
+/* Unfortunately, these idle animations use up a lot of CPU */
+.hand, .triangle { animation: none; transition: none; }
 
 .hand__base {
   fill: white;
@@ -198,7 +201,6 @@
   mix-blend-mode: lighten;
   transform: translate(0, 35px);
   font-weight: bold;
-  font-family: Helvetica, Arial, sans-serif;
   text-anchor: middle;
 }
 
@@ -224,7 +226,6 @@
   font-size: 120px;
   transform: translate(0, 40px);
   font-weight: bold;
-  font-family: Helvetica, Arial, sans-serif;
   text-anchor: middle;
 }
 
@@ -415,10 +416,6 @@
 <symbol id="triangle-down">
   <g class="triangle__bg"><use href="#triangle" transform="scale(1 -1) translate(0 -150)" /></g>
 </symbol>
-
-<filter id="note-picker-shadow">
-  <feDropShadow dx="2" dy="12" stdDeviation="5" flood-opacity="0.3" />
-</filter>
 
 <symbol id="title-banner">
   <g class="title_banner title_banner--shifted">

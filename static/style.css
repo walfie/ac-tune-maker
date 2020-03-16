@@ -52,7 +52,6 @@ body {
 }
 
 .ac-button--play {
-  flex-grow: 1;
   background: #34bda3;
 }
 
