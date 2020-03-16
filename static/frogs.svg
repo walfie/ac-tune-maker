@@ -29,6 +29,7 @@ text {
 }
 
 .frog {
+  pointer-events: bounding-box;
   transition: transform 0.1s ease-out;
 }
 
@@ -81,10 +82,11 @@ text {
 
 .frog__clickable-bg {
   x: -150px;
-  y: -350px;
+  y: -400px;
   width: 300px;
   height: 500px;
-  fill: #ffffff00;
+  fill: none;
+  pointer-events: all;
 }
 
 .row__top {
@@ -110,6 +112,10 @@ text {
   stroke-linejoin: round;
   stroke-linecap: round;
   animation: triangle 1s alternate infinite ease-in-out;
+}
+
+.triangle__bg {
+  pointer-events: all;
 }
 
 @keyframes triangle {
@@ -404,7 +410,7 @@ text {
 
 <symbol id="triangle">
   <g class="triangle--shifted">
-    <rect x="-150" y="-100" width="300" height="150" fill="#ffffff00"></rect>
+    <rect x="-150" y="-130" width="300" height="180" fill="none"></rect>
     <path class="triangle" d="M -80 10 Q 0 -10 80 10 L 0 -70 z"></path>
   </g>
 </symbol>

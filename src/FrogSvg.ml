@@ -39,7 +39,7 @@ let frog_svg
     in
     use
       [ href href_value
-      ; class' "triangle--unshifted"
+      ; class' "triangle--unshifted clickable"
       ; visibility (if is_visible then "visible" else "hidden")
       ; y_offset + offset |> string_of_int |> y
       ; onClick (Msg.updateNote index direction)
@@ -48,10 +48,10 @@ let frog_svg
   in
   let make_triangle direction = if is_selected then triangle direction else noNode in
   g
-    [ class' "clickable"; onClick (Msg.selectNote (Some index)) ]
-    [ rect [ class' "frog__clickable-bg" ] []
+    [ onClick (Msg.selectNote (Some index)) ]
+    [ rect [ class' "frog__clickable-bg clickable" ] []
     ; g
-        [ class' "frog"; style {j|transform: translate(0, $(y_offset)px);|j} ]
+        [ class' "frog clickable"; style {j|transform: translate(0, $(y_offset)px);|j} ]
         [ g
             [ classes [ "frog--large", is_large ] ]
             [ g
