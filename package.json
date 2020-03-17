@@ -1,20 +1,29 @@
 {
   "name": "ac-tune-maker",
   "version": "1.0.0",
-  "description": "Animal Crossing tune maker",
+  "description": "A website for making Animal Crossing tunes",
   "license": "MIT",
   "scripts": {
     "dev": "parcel src/index.html",
     "fmt": "ocamlformat --inplace src/*.ml src/*.mli",
+
+    "//": [
+      "Build twice as a terrible hack because pwa-manifest runs *after* sw-cache,",
+      "so the latter doesn't know about the generated icon/webmanifest files..."
+    ],
+
+    "prebuild": "rimraf dist && parcel build src/index.html --public-url . && rimraf dist/*.js dist/*.css",
     "build": "parcel build src/index.html --experimental-scope-hoisting --public-url ."
   },
+  "source": "src/index.html",
   "devDependencies": {
     "bs-platform": "^7.2.1",
     "bsb-js": "^1.1.7",
     "bucklescript-tea": "^0.14.0",
     "parcel-bundler": "^1.12.4",
     "parcel-plugin-pwa-manifest": "^2.9.2",
-    "parcel-plugin-sw-cache": "^0.3.1"
+    "parcel-plugin-sw-cache": "^0.3.1",
+    "rimraf": "^3.0.2"
   },
   "dependencies": {},
   "browserslist": [
@@ -22,9 +31,9 @@
   ],
   "cache": {
     "importWorkboxFrom": "local",
-    "runtimeCaching": [
-      { "urlPattern": [".+\\.[0-9a-f]+\\.[a-z]+$", "i"], "handler": "CacheFirst" },
-      { "urlPattern": ["\\.webmanifest$"], "handler": "CacheFirst" }
+    "clearDist": false,
+    "globPatterns": [
+      "**/*.{html,js,css,webmanifest}"
     ]
   },
   "pwaManifest": {

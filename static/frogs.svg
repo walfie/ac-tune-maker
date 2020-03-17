@@ -326,7 +326,7 @@ text {
 
 <symbol id="hand">
   <g transform="translate(100 100) rotate(-30)">
-    <g class="hand"">
+    <g class="hand">
       <path class="hand__base" d="
       M 0 -13
       C 15 -15 20 0 18 55
