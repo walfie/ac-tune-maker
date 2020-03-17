@@ -11,10 +11,25 @@
     "bs-platform": "^7.2.1",
     "bsb-js": "^1.1.7",
     "bucklescript-tea": "^0.14.0",
-    "parcel-bundler": "^1.12.4"
+    "parcel-bundler": "^1.12.4",
+    "parcel-plugin-pwa-manifest": "^2.9.2"
   },
   "dependencies": {},
   "browserslist": [
     "since 2017-06"
-  ]
+  ],
+  "pwaManifest": {
+    "name": "Animal Crossing Tune Maker",
+    "shortName": "Tune Maker",
+    "startURL": ".",
+    "theme": "#99dad3",
+    "generateIconOptions": {
+      "baseIcon": "./static/icon.svg",
+      "sizes": [96, 152, 192, 384, 512],
+      "genFavicons": true
+    },
+    "development": {
+      "disabled": true
+    }
+  }
 }

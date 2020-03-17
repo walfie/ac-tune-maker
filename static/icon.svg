@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+<style>
+.frog--shifted {
+  transform: translate(150px, 150px);
+}
+
+.frog--unshifted {
+  transform: translate(-150px, -150px);
+}
+
+.frog__eye,
+.frog__nose {
+  fill: #3d2700;
+}
+
+.frog__mouth--open {
+  fill: #fafbe3;
+}
+</style>
+
+<defs>
+<mask id="frog-mouth-mask">
+  <ellipse cx="0" cy="55" rx="260" ry="115" fill="white"></ellipse>
+</mask>
+</defs>
+
+<g fill="#69ce2f" transform="translate(150, 165)">
+  <g class="frog__base">
+    <ellipse cx="0" cy="0" rx="150" ry="120"></ellipse>
+    <circle r="50" cx="-70" cy="-105"></circle>
+    <circle r="50" cx="70" cy="-105"></circle>
+  </g>
+
+  <g class="frog__nose">
+    <circle r="3" cx="-9" cy="-85"></circle>
+    <circle r="3" cx="9" cy="-85"></circle>
+  </g>
+
+  <g>
+    <g class="frog__eye">
+      <circle r="20" cx="-70" cy="-105"></circle>
+      <circle r="20" cx="70" cy="-105"></circle>
+    </g>
+
+    <g class="frog__mouth--open" transform="scale(0.8)">
+      <ellipse cx="0" cy="5" rx="120" ry="100" mask="url(#frog-mouth-mask)"></ellipse>
+    </g>
+  </g>
+</g>
+</svg>
