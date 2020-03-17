@@ -5,19 +5,28 @@
   "license": "MIT",
   "scripts": {
     "dev": "parcel src/index.html",
-    "fmt": "ocamlformat --inplace src/*.ml src/*.mli"
+    "fmt": "ocamlformat --inplace src/*.ml src/*.mli",
+    "build": "parcel build src/index.html --experimental-scope-hoisting --public-url ."
   },
   "devDependencies": {
     "bs-platform": "^7.2.1",
     "bsb-js": "^1.1.7",
     "bucklescript-tea": "^0.14.0",
     "parcel-bundler": "^1.12.4",
-    "parcel-plugin-pwa-manifest": "^2.9.2"
+    "parcel-plugin-pwa-manifest": "^2.9.2",
+    "parcel-plugin-sw-cache": "^0.3.1"
   },
   "dependencies": {},
   "browserslist": [
     "since 2017-06"
   ],
+  "cache": {
+    "importWorkboxFrom": "local",
+    "runtimeCaching": [
+      { "urlPattern": [".+\\.[0-9a-f]+\\.[a-z]+$", "i"], "handler": "CacheFirst" },
+      { "urlPattern": ["\\.webmanifest$"], "handler": "CacheFirst" }
+    ]
+  },
   "pwaManifest": {
     "name": "Animal Crossing Tune Maker",
     "shortName": "Tune Maker",
