@@ -24,7 +24,7 @@ body {
 
 .ac-controls {
   display: flex;
-  padding: 20px 0 20px 0;
+  padding: 10px 0 10px 0;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap-reverse;
@@ -33,14 +33,16 @@ body {
 .ac-buttons {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .ac-button {
+  flex: 0 0 auto;
   font-size: 20px;
   border: 4px solid #ffffffbb;
   border-radius: 30px;
   padding: 10px;
-  margin: 0 5px 0 5px;
+  margin: 0 4px 4px 4px;
   width: 120px;
   height: 60px;
   background: #69ce2f;
