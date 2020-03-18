@@ -16,6 +16,7 @@ type t =
   | Play
   | Stop
   | Clear
+  | ShowInfo of bool
   | Randomize
   | FrameRendered
   | SaveSvg

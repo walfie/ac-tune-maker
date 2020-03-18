@@ -3,7 +3,7 @@ function Player(args) {
 
   // Delay in seconds
   this.delay = args.delay || 0.25;
-  this.volume = args.volume || 0.125;
+  this.volume = args.volume || 0.12;
 
   this.audioContext = null;
   this.gainNode = null;

@@ -70,6 +70,7 @@ type state =
   ; playing_index : Tune.Index.t option
   ; selected_index : Tune.Index.t option
   ; awaiting_frame : bool
+  ; modal_visible : bool
   }
 
 let locationToRoute location =
@@ -119,6 +120,7 @@ let init () location =
     ; playing_index = None
     ; awaiting_frame = false
     ; selected_index = Some Tune.Index.min
+    ; modal_visible = false
     ; location
     }
   , Cmd.batch [ Cmd.msg (UrlChange location) ] )
@@ -205,9 +207,38 @@ let update model = function
       | _ -> player |. Player.play_no_callback (Note.string_of_note note)
     in
     model, Cmd.call play_note
+  | ShowInfo modal_visible -> { model with modal_visible }, Cmd.none
   | FrameRendered ->
     let filename = "tune_" ^ Tune.to_string model.tune ^ ".png" in
     { model with awaiting_frame = false }, Task.ignore (save_svg_task filename)
+;;
+
+let modal =
+  div
+    ~key:""
+    [ class' "ac-modal__bg"; onClick (Msg.ShowInfo false) ]
+    [ div
+        [ class' "ac-modal" ]
+        [ span
+            [ class' "ac-modal__close"; onClick (Msg.ShowInfo false) ]
+            [ text {js|×|js} ]
+        ; h1 [ class' "ac-modal__title" ] [ text "Animal Crossing Tune Maker" ]
+        ; p
+            []
+            [ text
+                "Click a frog and press the up/down arrows to adjust the note. You can \
+                 also choose a note from the bottom right, or navigate with the arrow \
+                 keys."
+            ]
+        ; p [] [ text "Tap the banner at the top left to change the tune title." ]
+        ; div
+            [ class' "ac-modal__footer" ]
+            [ a
+                [ href "https://github.com/walfie/ac-tune-maker"; target "_blank" ]
+                [ text "github.com/walfie/ac-tune-maker" ]
+            ]
+        ]
+    ]
 ;;
 
 let view model =
@@ -235,6 +266,7 @@ let view model =
         ~selected_index:model.selected_index
         ~playing_index:model.playing_index
         ~title:model.title
+    ; (if model.modal_visible then modal else noNode)
     ; div
         [ class' "ac-controls" ]
         [ input' [ class' "ac-share-url"; disabled true; value share_url ] []
@@ -249,7 +281,10 @@ let view model =
                 [ text "Random" ]
             ; button
                 [ class' "ac-button ac-button--delete"; onClick Clear ]
-                [ text "Clear" ]
+                [ text "Delete" ]
+            ; button
+                [ class' "ac-button ac-button--info"; onClick (ShowInfo true) ]
+                [ text {js|ⓘ|js} ]
             ]
         ]
     ]
