@@ -71,6 +71,11 @@ body {
   color: #846836;
 }
 
+.ac-button--save {
+  background: #eac35e;
+  color: #92654e;
+}
+
 .ac-button:hover {
   border-color: #ffffffbb;
   border-radius: 20px;

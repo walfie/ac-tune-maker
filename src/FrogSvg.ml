@@ -148,7 +148,7 @@ let bg_svg
     selected_index |. Belt.Option.mapWithDefault noNode (note_picker current_note)
   in
   svg
-    [ class' "ac-main"; viewBox "-200 0 3800 2100" ]
+    [ class' "ac-main js-svg-main"; viewBox "0 0 3750 2100" ]
     [ use
         ~key:""
         [ href "#bg"; onClick (Msg.SelectNote None); pointerEvents "bounding-box" ]

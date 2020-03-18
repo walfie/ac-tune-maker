@@ -6,12 +6,10 @@
   "scripts": {
     "dev": "parcel src/index.html",
     "fmt": "ocamlformat --inplace src/*.ml src/*.mli",
-
     "//": [
       "Build twice as a terrible hack because pwa-manifest runs *after* sw-cache,",
       "so the latter doesn't know about the generated icon/webmanifest files..."
     ],
-
     "prebuild": "rimraf dist && parcel build src/index.html --public-url . && rimraf dist/*.js dist/*.css",
     "build": "parcel build src/index.html --experimental-scope-hoisting --public-url ."
   },
@@ -25,7 +23,9 @@
     "parcel-plugin-sw-cache": "^0.3.1",
     "rimraf": "^3.0.2"
   },
-  "dependencies": {},
+  "dependencies": {
+    "save-svg-as-png": "^1.4.17"
+  },
   "browserslist": [
     "since 2017-06"
   ],
@@ -43,7 +43,13 @@
     "theme": "#99dad3",
     "generateIconOptions": {
       "baseIcon": "./static/icon.svg",
-      "sizes": [96, 152, 192, 384, 512],
+      "sizes": [
+        96,
+        152,
+        192,
+        384,
+        512
+      ],
       "genFavicons": true
     },
     "development": {

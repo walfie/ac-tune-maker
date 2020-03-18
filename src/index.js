@@ -6,6 +6,7 @@ const initFrogsSvg = () => {
   const frogsSvg = readFileSync(__dirname + '/../static/frogs.svg', 'utf-8');
   const div = document.createElement('div');
   div.innerHTML = frogsSvg;
+  div.querySelector('svg').setAttribute('class', 'js-svg-defs');
   document.body.appendChild(div);
 };
 

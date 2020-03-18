@@ -17,6 +17,8 @@ type t =
   | Stop
   | Clear
   | Randomize
+  | FrameRendered
+  | SaveSvg
   | SelectNote of Tune.Index.t option
   | KeyPressed of Keyboard.key
   | PlayingNote of Tune.Index.t option

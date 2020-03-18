@@ -21,7 +21,7 @@ text {
 }
 
 .bg--shifted {
-  transform: translate(1750px, 1100px);
+  transform: translate(1950px, 1150px);
 }
 
 .clickable {

@@ -22,6 +22,34 @@ module Player = struct
   external play_no_callback : player -> string -> unit = "play" [@@bs.send]
 end
 
+module Dom = struct
+  type document
+  type element
+
+  type bbox =
+    { width : float
+    ; height : float
+    }
+
+  external document : document = "document" [@@bs.val]
+
+  (* This could technically return null, but we're only using this for `.js-title-text` *)
+  external querySelector : document -> string -> element = "querySelector" [@@bs.send]
+
+  external createElementNS : document -> string -> string -> element = "createElementNS"
+    [@@bs.send]
+
+  external setInnerHTML : element -> string -> unit = "innerHTML" [@@bs.set]
+  external getBBox : element -> unit -> bbox = "getBBox" [@@bs.send]
+  external cloneNode : element -> bool -> element = "cloneNode" [@@bs.send]
+  external appendChild : element -> element -> unit = "appendChild" [@@bs.send]
+end
+
+module SaveSvgAsPng = struct
+  external saveSvgAsPng : Dom.element -> string -> unit = "saveSvgAsPng"
+    [@@bs.module "save-svg-as-png"] [@@bs.new]
+end
+
 external prompt : text:string -> default:string -> string Js.Nullable.t = "prompt"
   [@@bs.val] [@@bs.scope "window"]
 
@@ -53,30 +81,13 @@ let update_at_index l index new_value =
   List.mapi replace l
 ;;
 
-module Document = struct
-  type document
-  type element
-
-  type bbox =
-    { width : float
-    ; height : float
-    }
-
-  external document : document = "" [@@bs.val]
-
-  (* This could technically return null, but we're only using this for `.js-title-text` *)
-  external querySelector : document -> string -> element = "" [@@bs.send]
-  external setInnerHTML : element -> string -> unit = "innerHTML" [@@bs.set]
-  external getBBox : element -> unit -> bbox = "getBBox" [@@bs.send]
-end
-
 (* The `text` element in an SVG allows you to force the text to fit in a
  * specified size. However, we only want it constrained when the text is
  * *larger* than the container. To do that, we have to set the text, then check
  * the bounding box to see if the width is larger than our bounds, and if so,
  * add the `textLength` and `lengthAdjust` properties. *)
 let update_title_call (new_title : string) (cb : Msg.t Vdom.applicationCallbacks ref) =
-  let open Document in
+  let open Dom in
   let elem = document |. querySelector ".js-title-text" in
   let _ = elem |. setInnerHTML new_title in
   let box = elem |. getBBox () in
@@ -86,13 +97,25 @@ let update_title_call (new_title : string) (cb : Msg.t Vdom.applicationCallbacks
 
 let default_title = "Default Tune"
 
+let save_svg_task () =
+  let open Dom in
+  let main_svg = document |. querySelector ".js-svg-main" |. cloneNode true in
+  let defs_svg = document |. querySelector ".js-svg-defs" |. cloneNode true in
+  let new_svg = document |. createElementNS "http://www.w3.org/2000/svg" "svg" in
+  let _ = main_svg |. appendChild defs_svg in
+  let _ = Js.log main_svg in
+  (* TODO: Better file name *)
+  let _ = SaveSvgAsPng.saveSvgAsPng main_svg "out.png" in
+  Task.succeed ()
+;;
+
 let init () location =
   let route = locationToRoute location in
   ( { route
     ; tune = Tune.default
     ; title = { text = ""; is_long = false }
     ; playing_index = None
-    ; awaiting_frame = true
+    ; awaiting_frame = false
     ; selected_index = Some Tune.Index.min
     ; location
     }
@@ -148,6 +171,7 @@ let update model = function
     | Keyboard.Left -> model, maybe_update_index Tune.Index.max Tune.Index.prev
     | Keyboard.Right -> model, maybe_update_index Tune.Index.min Tune.Index.next)
   | PlayingNote maybe_index -> { model with playing_index = maybe_index }, Cmd.none
+  | SaveSvg -> { model with awaiting_frame = true; selected_index = None }, Cmd.none
   | UrlChange location ->
     let route = locationToRoute location in
     let new_tune, new_title =
@@ -179,6 +203,7 @@ let update model = function
       | _ -> player |. Player.play_no_callback (Note.string_of_note note)
     in
     model, Cmd.call play_note
+  | FrameRendered -> { model with awaiting_frame = false }, Task.ignore (save_svg_task ())
 ;;
 
 let view model =
@@ -213,6 +238,9 @@ let view model =
             [ class' "ac-buttons" ]
             [ play_pause
             ; button
+                [ class' "ac-button ac-button--save"; onClick SaveSvg ]
+                [ text "Save" ]
+            ; button
                 [ class' "ac-button ac-button--random"; onClick Randomize ]
                 [ text "Random" ]
             ; button
@@ -223,7 +251,14 @@ let view model =
     ]
 ;;
 
-let subscriptions model = Sub.map keyPressed Keyboard.pressed
+let subscriptions model =
+  Sub.batch
+    [ (if model.awaiting_frame
+      then AnimationFrame.every (fun _ -> FrameRendered)
+      else Sub.none)
+    ; Sub.map keyPressed Keyboard.pressed
+    ]
+;;
 
 let main =
   Tea.Navigation.navigationProgram
