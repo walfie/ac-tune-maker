@@ -43,10 +43,13 @@ module Dom = struct
   external getBBox : element -> unit -> bbox = "getBBox" [@@bs.send]
   external cloneNode : element -> bool -> element = "cloneNode" [@@bs.send]
   external appendChild : element -> element -> unit = "appendChild" [@@bs.send]
+  external setAttribute : element -> string -> string -> unit = "setAttribute" [@@bs.send]
 end
 
 module SaveSvgAsPng = struct
-  external saveSvgAsPng : Dom.element -> string -> unit = "saveSvgAsPng"
+  type options = { scale : float }
+
+  external saveSvgAsPng : Dom.element -> string -> options -> unit = "saveSvgAsPng"
     [@@bs.module "save-svg-as-png"] [@@bs.new]
 end
 
@@ -97,15 +100,14 @@ let update_title_call (new_title : string) (cb : Msg.t Vdom.applicationCallbacks
 
 let default_title = "Default Tune"
 
-let save_svg_task () =
+let save_svg_task filename =
   let open Dom in
   let main_svg = document |. querySelector ".js-svg-main" |. cloneNode true in
   let defs_svg = document |. querySelector ".js-svg-defs" |. cloneNode true in
   let new_svg = document |. createElementNS "http://www.w3.org/2000/svg" "svg" in
   let _ = main_svg |. appendChild defs_svg in
-  let _ = Js.log main_svg in
-  (* TODO: Better file name *)
-  let _ = SaveSvgAsPng.saveSvgAsPng main_svg "out.png" in
+  let _ = main_svg |. setAttribute "class" "" in
+  let _ = SaveSvgAsPng.saveSvgAsPng main_svg filename { scale = 0.5 } in
   Task.succeed ()
 ;;
 
@@ -203,7 +205,9 @@ let update model = function
       | _ -> player |. Player.play_no_callback (Note.string_of_note note)
     in
     model, Cmd.call play_note
-  | FrameRendered -> { model with awaiting_frame = false }, Task.ignore (save_svg_task ())
+  | FrameRendered ->
+    let filename = "tune_" ^ Tune.to_string model.tune ^ ".png" in
+    { model with awaiting_frame = false }, Task.ignore (save_svg_task filename)
 ;;
 
 let view model =
