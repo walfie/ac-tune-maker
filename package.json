@@ -11,7 +11,7 @@
       "so the latter doesn't know about the generated icon/webmanifest files..."
     ],
     "prebuild": "rimraf dist && parcel build src/index.html --public-url . && rimraf dist/*.js dist/*.css",
-    "build": "parcel build src/index.html --experimental-scope-hoisting --public-url ."
+    "build": "parcel build src/index.html --experimental-scope-hoisting --public-url . && cp static/meta.png dist/"
   },
   "source": "src/index.html",
   "devDependencies": {
