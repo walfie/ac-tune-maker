@@ -42,7 +42,7 @@
     "runtimeCaching": [
       {
         "urlPattern": [
-          ".+\\.[0-9a-f]+\\.[a-z]+$",
+          "/.+\\.[0-9a-f]+\\.[a-z]+$",
           "i"
         ],
         "handler": "CacheFirst"
@@ -50,7 +50,8 @@
     ],
     "globPatterns": [
       "**/*.{html,js,css,webmanifest}"
-    ]
+    ],
+    "navigateFallback": "undefined"
   },
   "pwaManifest": {
     "name": "Animal Crossing Tune Maker",
