@@ -26,6 +26,7 @@ module Dom = struct
     }
 
   external document : element = "document" [@@bs.val]
+  external setTitle : element -> string -> unit = "title" [@@bs.set]
 
   external querySelectorUnsafe : element -> string -> element = "querySelector"
     [@@bs.send]
