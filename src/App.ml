@@ -251,7 +251,12 @@ let view model =
     ; (if model.modal_visible then modal else noNode)
     ; div
         [ class' "ac-controls" ]
-        [ div [ class' "ac-share-url" ] [ text (share_url model) ]
+        [ input'
+            [ class' "ac-share-url"
+            ; Html2.Attributes.readonly true
+            ; value (share_url model)
+            ]
+            []
         ; div
             [ class' "ac-buttons" ]
             [ play_pause

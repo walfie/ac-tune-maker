@@ -109,10 +109,6 @@ html, body, #app {
   border: 4px solid #ffffffbb;
   background: #fffbe5;
   padding-left: 10px;
-  -webkit-user-select: all;
-  -moz-user-select: all;
-  -ms-user-select: all;
-  user-select: all;
   font-size: 0.9em;
   white-space: nowrap;
   overflow: hidden;
