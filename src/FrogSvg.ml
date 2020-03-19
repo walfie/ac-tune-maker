@@ -115,6 +115,10 @@ let title_banner (title : Msg.Title.t) =
     ]
 ;;
 
+let viewBoxWidth = 3750.0
+let viewBoxHeight = 2100.0
+let viewBoxString = {j|0 0 $(viewBoxWidth) $(viewBoxHeight)|j}
+
 let bg_svg
     ~(tune : Tune.t)
     ~(selected_index : Tune.Index.t option)
@@ -148,7 +152,7 @@ let bg_svg
     selected_index |. Belt.Option.mapWithDefault noNode (note_picker current_note)
   in
   svg
-    [ class' "ac-main js-svg-main"; viewBox "0 0 3750 2100" ]
+    [ class' "ac-main js-svg-main"; viewBox viewBoxString ]
     [ use
         ~key:""
         [ href "#bg"; onClick (Msg.SelectNote None); pointerEvents "bounding-box" ]

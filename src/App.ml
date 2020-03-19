@@ -188,30 +188,39 @@ let update model = function
     { model with awaiting_frame = false }, Task.ignore (save_svg_task url filename)
 ;;
 
+let onClickStopPropagation msg =
+  onWithOptions
+    ~key:""
+    "click"
+    { defaultOptions with stopPropagation = true }
+    (Tea.Json.Decoder.succeed msg)
+;;
+
 let modal =
   div
     ~key:""
     [ class' "ac-modal__bg"; onClick (Msg.ShowInfo false) ]
     [ div
-        [ class' "ac-modal"
-        ; onWithOptions
-            ~key:""
-            "click"
-            { defaultOptions with stopPropagation = true }
-            (Tea.Json.Decoder.succeed (Msg.ShowInfo true))
-        ]
+        [ class' "ac-modal"; onClickStopPropagation (Msg.ShowInfo true) ]
         [ span
-            [ class' "ac-modal__close"; onClick (Msg.ShowInfo false) ]
+            [ class' "ac-modal__close"; onClickStopPropagation (Msg.ShowInfo false) ]
             [ text {js|×|js} ]
         ; h1 [ class' "ac-modal__title" ] [ text "Animal Crossing Tune Maker" ]
         ; p
             []
             [ text
-                "Click a frog and press the up/down arrows to adjust the note. You can \
-                 also choose a note from the bottom right, or navigate with the arrow \
-                 keys."
+                "Click a frog and press the up/down triangles to adjust the note. You \
+                 can also choose a note from the bottom right, or navigate with the \
+                 arrow keys on your keyboard."
             ]
         ; p [] [ text "Tap the banner at the top left to change the tune title." ]
+        ; p
+            []
+            [ text
+                "Clicking the `Export` button will save the current tune as a PNG, along \
+                 with a QR code containing a link to this page (with the tune \
+                 pre-loaded), to make it easier for others to play it."
+            ]
         ; div
             [ class' "ac-modal__footer" ]
             [ a
