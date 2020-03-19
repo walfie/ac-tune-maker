@@ -3,6 +3,7 @@ import Player from './player';
 
 (() => {
   const div = document.createElement('div');
+  div.style = "height: 0";
 
   if (process.env.NODE_ENV === 'production') {
     div.innerHTML = readFileSync(__dirname + '/../build/frogs.svg', 'utf-8');

@@ -1,16 +1,13 @@
 html {
-  height: 100%;
-  width: 100%;
   background-color: #7bc9c2;
   font-family: Helvetica, Arial, sans-serif;
 }
 
-body {
+html, body, #app {
   margin: 0;
-  height: 100%;
-}
-
-#app {
+  padding: 0;
+  margin: 0;
+  width: 100%;
   height: 100%;
 }
 
@@ -23,8 +20,8 @@ body {
 .ac-main {
   flex-grow: 1;
   background-color: #baa584;
+  height: 100%;
   width: 100%;
-  max-height: 85vh;
   padding-bottom: 10px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle r='3' cx='10' cy='10' fill='%23ffffff88'/%3E%3Ccircle r='3' cx='30' cy='30' fill='%23ffffff88'/%3E%3C/svg%3E");
 }

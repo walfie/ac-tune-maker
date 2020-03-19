@@ -2,6 +2,7 @@
 .bsb.lock
 .cache
 .merlin
+build/
 dist/
 lib/bs/
 node_modules/

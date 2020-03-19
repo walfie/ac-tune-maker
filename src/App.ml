@@ -193,7 +193,13 @@ let modal =
     ~key:""
     [ class' "ac-modal__bg"; onClick (Msg.ShowInfo false) ]
     [ div
-        [ class' "ac-modal" ]
+        [ class' "ac-modal"
+        ; onWithOptions
+            ~key:""
+            "click"
+            { defaultOptions with stopPropagation = true }
+            (Tea.Json.Decoder.succeed (Msg.ShowInfo true))
+        ]
         [ span
             [ class' "ac-modal__close"; onClick (Msg.ShowInfo false) ]
             [ text {js|×|js} ]
@@ -251,7 +257,7 @@ let view model =
                 [ text "Delete" ]
             ; button
                 [ class' "ac-button ac-button--info"; onClick (ShowInfo true) ]
-                [ text {js|ⓘ|js} ]
+                [ text {js|⋯|js} ]
             ]
         ]
     ]
