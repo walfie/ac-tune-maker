@@ -54,7 +54,7 @@
   },
   "pwaManifest": {
     "name": "Animal Crossing Tune Maker",
-    "shortName": "Tune Maker",
+    "shortName": "AC Tune Maker",
     "startURL": ".",
     "theme": "#99dad3",
     "generateIconOptions": {
