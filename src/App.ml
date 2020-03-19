@@ -84,7 +84,7 @@ let init () location =
     ; title = { text = ""; is_long = false }
     ; playing_index = None
     ; awaiting_frame = false
-    ; selected_index = Some Tune.Index.min
+    ; selected_index = None
     ; modal_visible = false
     ; location
     }
