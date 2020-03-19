@@ -166,9 +166,6 @@ let bg_svg
             [ use [ href "#qr-code-tag" ] []; g [ class' "js-qr-code qr_code" ] [] ]
         ]
     ; g [ class' "bg--shifted" ] ordered_frogs
-    ; g
-        ~key:{j|$(selected_index)_$(current_note)|j}
-        [ class' "bg--shifted" ]
-        [ note_picker_elem ]
+    ; g [ class' "bg--shifted" ] [ note_picker_elem ]
     ]
 ;;
