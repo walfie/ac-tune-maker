@@ -4,6 +4,7 @@
   "description": "A website for making Animal Crossing tunes",
   "license": "MIT",
   "scripts": {
+    "predev": "yarn run minify-svg",
     "dev": "parcel src/index.html",
     "fmt": "ocamlformat --inplace src/*.ml src/*.mli",
     "//": [

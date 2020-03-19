@@ -57,7 +57,13 @@ Player.prototype.stop = function(time) {
     gain.exponentialRampToValueAtTime(0.0001, fadeoutStopTime);
   }
 
-  if (this.oscillator) { this.oscillator.stop(fadeoutStopTime); }
+  if (this.oscillator) {
+    try {
+      this.oscillator.stop(fadeoutStopTime);
+    } catch (e) {
+      // Do nothing
+    }
+  }
 }
 
 Player.prototype.play = function(notes, onNote, onStop) {
@@ -70,7 +76,12 @@ Player.prototype.play = function(notes, onNote, onStop) {
   }
 
   if (this.oscillator) {
-    this.oscillator.stop();
+    try {
+      this.oscillator.stop();
+    } catch (e) {
+      // Do nothing
+    }
+
     this.oscillator.disconnect(this.audioContext);
   }
 

@@ -91,13 +91,21 @@ let note_picker (current_note : Note.note option) (selected_index : Tune.Index.t
       ; style {j|transform: translate($(x_pos)px, 0)|j}
       ; onClick update_note
       ]
-      [ rect [ class' "note_picker__note"; fill meta.color ] []
+      [ rect
+          [ class' "note_picker__note"
+          ; fill meta.color
+          ; (* Ideally this radius would be specified in CSS, but it doesn't work in Safari *)
+            rx "55"
+          ]
+          []
       ; text' [ class' "note_picker__text" ] [ text letter ]
       ; current_indicator
       ]
   in
   let elems = Note.all |> Js.Array.map to_elem |> Array.to_list in
-  g [ class' "note_picker" ] [ rect [ class' "note_picker__bg" ] []; g [] elems ]
+  g
+    [ class' "note_picker" ]
+    [ rect [ class' "note_picker__bg"; rx "100" ] []; g [] elems ]
 ;;
 
 let title_banner (title : Msg.Title.t) =

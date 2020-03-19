@@ -173,7 +173,6 @@ text {
 .note_picker__note {
   width: 140px;
   height: 140px;
-  rx: 55px;
   transform: translate(-70px, -70px);
   transition: all 0.1s ease-out;
 }
@@ -189,7 +188,6 @@ text {
   transform: translate(-120px, -100px);
   width: 2500px;
   height: 210px;
-  rx: 100px;
   fill: #f8f4eb;
 }
 
