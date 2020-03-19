@@ -372,7 +372,7 @@ text {
       <path class="hand__base" d="M 67 132 C 70 135 65 130 60 130" />
       <path class="hand__base" d="M -12 60 Q -10 80 -12 83" />
     </g>
-  </g
+  </g>
 </symbol>
 
 <symbol id="bg">
@@ -432,7 +432,7 @@ text {
         <use href="#bg-eighth-note" />
       </g>
     </g>
-  <g>
+  </g>
 </symbol>
 
 <symbol id="triangle">
