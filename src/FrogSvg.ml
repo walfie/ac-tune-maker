@@ -22,7 +22,7 @@ let frog_svg
     | Hold -> "#frog-hold", "frog__text", {js|—|js}
     | Rest -> "#frog-rest", "frog__text", ""
     | Random -> "#frog-random", "frog__text frog__text--large", "?"
-    | other -> "#frog-normal", "frog__text", String.uppercase_ascii (string_of_note other)
+    | other -> "#frog-normal", "frog__text", string_of_note other
   in
   let meta = Note.meta note in
   let y_offset = meta.index * -15 in
