@@ -87,7 +87,6 @@ let note_picker (current_note : Note.note option) (selected_index : Tune.Index.t
       else noNode
     in
     g
-      ~unique:letter
       [ class' "note_picker__container clickable"
       ; style {j|transform: translate($(x_pos)px, 0)|j}
       ; onClick update_note

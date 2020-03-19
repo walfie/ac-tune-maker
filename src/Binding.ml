@@ -27,8 +27,11 @@ module Dom = struct
 
   external document : element = "document" [@@bs.val]
 
-  (* This could technically return null, but we're only using this for `.js-title-text` *)
-  external querySelector : element -> string -> element = "querySelector" [@@bs.send]
+  external querySelectorUnsafe : element -> string -> element = "querySelector"
+    [@@bs.send]
+
+  external querySelector : element -> string -> element Js.Nullable.t = "querySelector"
+    [@@bs.send]
 
   external createElementNS : element -> string -> string -> element = "createElementNS"
     [@@bs.send]

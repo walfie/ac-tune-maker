@@ -14,7 +14,7 @@
     "prebuild": "shx rm -rf dist && yarn run minify-svg && parcel build --no-source-maps src/index.html --public-url . && shx rm dist/*.js dist/*.css",
     "build": "parcel build src/index.html --experimental-scope-hoisting --public-url .",
     "postbuild": "shx cp static/meta.png static/CNAME dist/",
-    "deploy": "yarn run build && gh-pages -d dist"
+    "deploy": "yarn run build && gh-pages -d dist --no-history"
   },
   "source": "src/index.html",
   "devDependencies": {
