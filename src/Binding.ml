@@ -18,7 +18,6 @@ module Player = struct
 end
 
 module Dom = struct
-  type document
   type element
 
   type bbox =
@@ -26,12 +25,12 @@ module Dom = struct
     ; height : float
     }
 
-  external document : document = "document" [@@bs.val]
+  external document : element = "document" [@@bs.val]
 
   (* This could technically return null, but we're only using this for `.js-title-text` *)
-  external querySelector : document -> string -> element = "querySelector" [@@bs.send]
+  external querySelector : element -> string -> element = "querySelector" [@@bs.send]
 
-  external createElementNS : document -> string -> string -> element = "createElementNS"
+  external createElementNS : element -> string -> string -> element = "createElementNS"
     [@@bs.send]
 
   external setInnerHTML : element -> string -> unit = "innerHTML" [@@bs.set]
@@ -46,6 +45,22 @@ module SaveSvgAsPng = struct
 
   external saveSvgAsPng : Dom.element -> string -> options -> unit = "saveSvgAsPng"
     [@@bs.module "save-svg-as-png"] [@@bs.new]
+end
+
+module QrCodeGenerator = struct
+  type qrcode
+  type options = { margin : int }
+
+  external create
+    :  typeNumber:int
+    -> errorCorrection:string
+    -> qrcode
+    = "qrcode-generator"
+    [@@bs.module]
+
+  external addData : qrcode -> string -> unit = "addData" [@@bs.send]
+  external make : qrcode -> unit -> unit = "make" [@@bs.send]
+  external createSvgTag : qrcode -> options -> string = "createSvgTag" [@@bs.send]
 end
 
 external prompt : text:string -> default:string -> string Js.Nullable.t = "prompt"

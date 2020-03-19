@@ -153,7 +153,14 @@ let bg_svg
         ~key:""
         [ href "#bg"; onClick (Msg.SelectNote None); pointerEvents "bounding-box" ]
         []
-    ; g [ class' "bg--shifted" ] [ title_banner title ]
+    ; g
+        [ class' "bg--shifted" ]
+        [ title_banner title
+        ; g
+            ~key:""
+            [ class' "js-qr-code-tag bg--unshifted"; visibility "hidden" ]
+            [ use [ href "#qr-code-tag" ] []; g [ class' "js-qr-code qr_code" ] [] ]
+        ]
     ; g [ class' "bg--shifted" ] ordered_frogs
     ; g
         ~key:{j|$(selected_index)_$(current_note)|j}

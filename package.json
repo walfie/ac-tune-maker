@@ -24,6 +24,7 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
+    "qrcode-generator": "^1.4.4",
     "save-svg-as-png": "^1.4.17"
   },
   "browserslist": [

@@ -49,13 +49,30 @@ let update_title_call (new_title : string) (cb : Msg.t Vdom.applicationCallbacks
 
 let default_title = "Default Tune"
 
-let save_svg_task filename =
+let save_svg_task url filename =
   let open Dom in
   let main_svg = document |. querySelector ".js-svg-main" |. cloneNode true in
   let defs_svg = document |. querySelector ".js-svg-defs" |. cloneNode true in
-  let new_svg = document |. createElementNS "http://www.w3.org/2000/svg" "svg" in
   let _ = main_svg |. appendChild defs_svg in
   let _ = main_svg |. setAttribute "class" "" in
+  let _ =
+    (* Generate QR code on a luggage tag *)
+    let open QrCodeGenerator in
+    let _ =
+      main_svg |. querySelector ".js-qr-code-tag" |. setAttribute "visibility" "visible"
+    in
+    let qr = QrCodeGenerator.create ~typeNumber:0 ~errorCorrection:"M" in
+    let _ = qr |. addData url in
+    let _ = qr |. make () in
+    let qr_string = qr |. createSvgTag { margin = 2 } in
+    let elem = main_svg |. querySelector ".js-qr-code" in
+    let _ = elem |. setInnerHTML qr_string in
+    let svg = elem |. querySelector "svg" in
+    let _ = svg |. setAttribute "width" "300px" in
+    let _ = svg |. setAttribute "width" "300px" in
+    let _ = svg |. setAttribute "height" "300px" in
+    ()
+  in
   let _ = SaveSvgAsPng.saveSvgAsPng main_svg filename { scale = 0.5 } in
   Task.succeed ()
 ;;
@@ -72,6 +89,15 @@ let init () location =
     ; location
     }
   , Cmd.batch [ Cmd.msg (UrlChange location) ] )
+;;
+
+let share_url model =
+  let tune_string = Tune.to_string model.tune in
+  let encoded_title = Js.Global.encodeURIComponent model.title.text in
+  let new_hash = {j|#/tune/$(tune_string)/$(encoded_title)|j} in
+  match model.location.hash with
+  | "" -> model.location.href ^ new_hash
+  | hash -> model.location.href |> Js.String.replace hash new_hash
 ;;
 
 let update model = function
@@ -123,7 +149,7 @@ let update model = function
     | Keyboard.Left -> model, maybe_update_index Tune.Index.max Tune.Index.prev
     | Keyboard.Right -> model, maybe_update_index Tune.Index.min Tune.Index.next)
   | PlayingNote maybe_index -> { model with playing_index = maybe_index }, Cmd.none
-  | SaveSvg -> { model with awaiting_frame = true; selected_index = None }, Cmd.none
+  | ExportImage -> { model with awaiting_frame = true; selected_index = None }, Cmd.none
   | UrlChange location ->
     let route = locationToRoute location in
     let new_tune, new_title =
@@ -157,8 +183,9 @@ let update model = function
     model, Cmd.call play_note
   | ShowInfo modal_visible -> { model with modal_visible }, Cmd.none
   | FrameRendered ->
+    let url = share_url model in
     let filename = "tune_" ^ Tune.to_string model.tune ^ ".png" in
-    { model with awaiting_frame = false }, Task.ignore (save_svg_task filename)
+    { model with awaiting_frame = false }, Task.ignore (save_svg_task url filename)
 ;;
 
 let modal =
@@ -199,14 +226,6 @@ let view model =
     in
     button [ class' "ac-button ac-button--play"; onClick msg ] [ text content ]
   in
-  let tune_string = Tune.to_string model.tune in
-  let encoded_title = Js.Global.encodeURIComponent model.title.text in
-  let new_hash = {j|#/tune/$(tune_string)/$(encoded_title)|j} in
-  let share_url =
-    match model.location.hash with
-    | "" -> model.location.href ^ new_hash
-    | hash -> model.location.href |> Js.String.replace hash new_hash
-  in
   div
     [ class' "ac-container" ]
     [ FrogSvg.bg_svg
@@ -217,13 +236,13 @@ let view model =
     ; (if model.modal_visible then modal else noNode)
     ; div
         [ class' "ac-controls" ]
-        [ input' [ class' "ac-share-url"; disabled true; value share_url ] []
+        [ input' [ class' "ac-share-url"; disabled true; value (share_url model) ] []
         ; div
             [ class' "ac-buttons" ]
             [ play_pause
             ; button
-                [ class' "ac-button ac-button--save"; onClick SaveSvg ]
-                [ text "Save" ]
+                [ class' "ac-button ac-button--save"; onClick ExportImage ]
+                [ text "Export" ]
             ; button
                 [ class' "ac-button ac-button--random"; onClick Randomize ]
                 [ text "Random" ]

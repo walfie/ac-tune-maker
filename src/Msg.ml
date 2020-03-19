@@ -19,7 +19,7 @@ type t =
   | ShowInfo of bool
   | Randomize
   | FrameRendered
-  | SaveSvg
+  | ExportImage
   | SelectNote of Tune.Index.t option
   | KeyPressed of Keyboard.key
   | PlayingNote of Tune.Index.t option

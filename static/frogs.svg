@@ -21,7 +21,7 @@ text {
 }
 
 .bg--shifted {
-  transform: translate(1950px, 1125px);
+  transform: translate(1950px, 1100px);
 }
 
 .clickable {
@@ -246,12 +246,39 @@ text {
 .title_banner--shifted {
   transform: translate(650px, 500px);
 }
+
+.qr_code {
+  transform: translate(1430px, 575px) rotate(15deg);
+}
+
+.qr_code__tag {
+  fill: white;
+  fill-rule: evenodd;
+  stroke: #79c3d8;
+  stroke-width: 25px;
+  stroke-linejoin: round;
+}
+
+.qr_code__tag_container {
+  transform-origin: 175px 50px;
+  transform: translate(1250px, 550px) rotate(15deg);
+}
 </style>
 
 <!-- This is part of a hack used to determine whether the banner text should shrink to fit the container -->
 <text class="title_banner__text js-title-text" style="visibility: hidden;"></text>
 
 <defs>
+<symbol id="qr-code-tag">
+<g class="qr_code__tag_container">
+<path class="qr_code__tag" d="
+  M0 250 L 0 100 L 100 0 L500 0 L 500 350 L 100 350 Z
+  M 50 170
+  a 25,25 0 1,0 50,0
+  a 25,25 0 1,0 -50,0"/>
+</g>
+</symbol>
+
 <symbol id="frog-base">
   <g class="frog__base frog--shifted">
     <ellipse cx="0" cy="0" rx="150" ry="120"></ellipse>
