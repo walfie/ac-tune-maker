@@ -236,7 +236,7 @@ let view model =
     ; (if model.modal_visible then modal else noNode)
     ; div
         [ class' "ac-controls" ]
-        [ input' [ class' "ac-share-url"; disabled true; value (share_url model) ] []
+        [ div [ class' "ac-share-url" ] [ text (share_url model) ]
         ; div
             [ class' "ac-buttons" ]
             [ play_pause
