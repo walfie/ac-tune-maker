@@ -235,16 +235,16 @@ text {
   text-anchor: middle;
 }
 
-.title_banner--unshifted {
-  transform: translate(-650px, -500px);
-}
-
 .title_banner--rotated {
-  transform: translate(-1400px, -645px) rotate(-40deg);
+  transform: translate(-1400px, -655px) rotate(-40deg);
 }
 
 .title_banner--shifted {
   transform: translate(650px, 500px);
+}
+
+.title_banner--unshifted {
+  transform: translate(-650px, -500px);
 }
 
 .qr_code {
