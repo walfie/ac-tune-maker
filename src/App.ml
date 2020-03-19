@@ -33,7 +33,7 @@ let update_at_index l index new_value =
   List.mapi replace l
 ;;
 
-let default_title = "Default Tune"
+let default_title = "AC Tune Maker"
 
 let init () location =
   let route = locationToRoute location in
