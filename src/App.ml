@@ -159,7 +159,8 @@ let modal =
   div
     ~key:""
     [ class' "ac-modal__bg"; onClick (Msg.ShowInfo false) ]
-    [ div
+    [ div [ class' "ac-modal__pad-start" ] []
+    ; div
         [ class' "ac-modal"; onClickStopPropagation (Msg.ShowInfo true) ]
         [ span
             [ class' "ac-modal__close"; onClickStopPropagation (Msg.ShowInfo false) ]
@@ -183,10 +184,17 @@ let modal =
         ; div
             [ class' "ac-modal__footer" ]
             [ a
+                [ href "https://twitter.com/walfieee/status/1240718100460273665"
+                ; target "_blank"
+                ]
+                [ text "Twitter" ]
+            ; text {js|  · |js}
+            ; a
                 [ href "https://github.com/walfie/ac-tune-maker"; target "_blank" ]
-                [ text "github.com/walfie/ac-tune-maker" ]
+                [ text "GitHub" ]
             ]
         ]
+    ; div [ class' "ac-modal__pad-end" ] []
     ]
 ;;
 

@@ -146,15 +146,25 @@ html, body, #app {
   height: 100%;
   overflow: auto;
   background-color: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ac-modal__pad-start {
+  align-self: flex-start;
+}
+
+.ac-modal__pad-end {
+  align-self: flex-end;
 }
 
 .ac-modal {
   background: #f7f3e7;
   border-radius: 40px;
-  margin: 10% auto;
-  padding: 25px;
+  padding: 25px 25px 15px 25px;
   color: #504445;
-  width: 400px;
+  width: 450px;
   max-width: 80%;
 }
 
@@ -187,7 +197,6 @@ html, body, #app {
 .ac-modal__footer {
   border-top: 2px dashed #b8b49b;
   padding: 15px 10px 0 10px;
-  margin-bottom: -10px;
   text-align: right;
 }
 
