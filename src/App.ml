@@ -195,7 +195,7 @@ let view model =
   let play_pause =
     let msg, content =
       match model.playing_index with
-      | None -> Play, {js|▶|js}
+      | None -> Play, {js|►|js}
       | Some _ -> Stop, {js|■|js}
     in
     button [ class' "ac-button ac-button--play"; onClick msg ] [ text content ]
