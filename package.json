@@ -19,7 +19,7 @@
   },
   "source": "src/index.html",
   "devDependencies": {
-    "bs-platform": "^7.2.1",
+    "bs-platform": "^7.2.2",
     "bsb-js": "^1.1.7",
     "gh-pages": "^2.2.0",
     "parcel-bundler": "^1.12.4",
