@@ -5,7 +5,7 @@ A website for making Animal Crossing tunes, written in OCaml with
 
 ## Development
 
-### Editor setup
+### Editor setup (Optional)
 
 - Install opam (OCaml Package Manager)
 
