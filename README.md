@@ -27,7 +27,7 @@ Due to limitations with Parcel, changes made to `.ml` files besides entry point
 `touch src/App.ml` to get it to rebuild the Bucklescript files.
 
 Note that the SVG files are written manually and it's not recommended to make
-changes to them via a visual editor, since the code, depends on certain
+changes to them via a visual editor, since the code depends on certain
 classes/elements to exist.
 
 ## Production
