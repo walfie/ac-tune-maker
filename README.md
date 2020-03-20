@@ -1,5 +1,7 @@
 # Animal Crossing Tune Maker
 
+[![Actions Status](https://github.com/walfie/ac-tune-maker/workflows/Main%20workflow/badge.svg?branch=master)](https://github.com/walfie/ac-tune-maker/actions)
+
 A website for making Animal Crossing tunes, written in OCaml with
 [Bucklescript-TEA](https://github.com/OvermindDL1/bucklescript-tea).
 
