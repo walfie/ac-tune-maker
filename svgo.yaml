@@ -1,7 +1,7 @@
 # Disable all optimizations except the ones in this file
 full: true
 plugins:
-- cleanupAttrs
-- removeComments
-- convertPathData
-- sortDefsChildren
+  - cleanupAttrs
+  - removeComments
+  - convertPathData
+  - sortDefsChildren
