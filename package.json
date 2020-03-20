@@ -9,6 +9,10 @@
     "fmt:ocamlformat": "ocamlformat --inplace src/*.ml src/*.mli",
     "fmt:prettier": "prettier --write \"**/*.{css,html,js,json,md,yaml,yml}\" --ignore-path .gitignore",
     "fmt": "yarn fmt:ocamlformat & yarn fmt:prettier",
+    "//": [
+      "Build twice as a terrible hack because pwa-manifest runs *after* sw-cache,",
+      "so the latter doesn't know about the generated icon/webmanifest files..."
+    ],
     "minify-svg": "svgo --config svgo.yaml static/frogs.svg -o build/frogs.svg",
     "prebuild": "shx rm -rf dist && yarn run minify-svg && parcel build --no-source-maps src/index.html --public-url . && shx rm dist/*.js dist/*.css",
     "build": "parcel build src/index.html --experimental-scope-hoisting --public-url .",
