@@ -12,9 +12,8 @@ import frogSvg from "../static/frogs.svg";
 main(document.getElementById("app"));
 
 if ("serviceWorker" in navigator) {
-  const sw = "sw.js";
   navigator.serviceWorker
-    .register(sw)
+    .register("sw.js")
     .then(({ scope }) => {
       console.log("Registration successful, scope is:", scope);
     })

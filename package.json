@@ -45,7 +45,8 @@
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3",
-    "webpack-plugin-pwa-manifest": "^1.0.2"
+    "webpack-plugin-pwa-manifest": "^1.0.2",
+    "workbox-webpack-plugin": "^5.1.3"
   },
   "lint-staged": {
     "*.{ml,mli}": "ocamlformat --inplace"
