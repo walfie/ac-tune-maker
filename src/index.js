@@ -1,5 +1,6 @@
 import { main } from "./App.bs";
 import frogSvg from "../static/frogs.svg";
+import "../static/style.css";
 
 (() => {
   const div = document.createElement("div");

@@ -1,20 +1,24 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const WebpackPluginPWAManifest = require("webpack-plugin-pwa-manifest");
-const {GenerateSW} = require('workbox-webpack-plugin');
+const { GenerateSW } = require("workbox-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   entry: "./src/index.js",
   plugins: [
     new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({ filename: "[name].[hash:8].css" }),
     new HtmlWebpackPlugin({ template: "./src/index.html" }),
     new GenerateSW({
       swDest: "sw.js",
       include: [/\.{html,js,css,webmanifest}$/],
-      runtimeCaching: [{
-        "urlPattern": /\/.+\.[0-9a-f]+\.[a-z]+$/i,
-        "handler": "CacheFirst"
-      }],
+      runtimeCaching: [
+        {
+          urlPattern: /\/.+\.[0-9a-f]+\.[a-z]+$/i,
+          handler: "CacheFirst"
+        }
+      ]
     }),
     new WebpackPluginPWAManifest({
       name: "Animal Crossing Tune Maker",
@@ -32,6 +36,10 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader"]
+      },
+      {
         test: /\.svg$/,
         use: [
           { loader: "raw-loader" },
@@ -45,7 +53,7 @@ module.exports = {
   },
   output: {
     path: __dirname + "/dist",
-    filename: "[name].[hash].js"
+    filename: "[name].[hash:8].js"
   },
   devServer: {
     overlay: true,
