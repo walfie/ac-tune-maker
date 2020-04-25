@@ -19,12 +19,8 @@ yarn install
 yarn run dev
 ```
 
-This will start a dev server on <http://localhost:1234> and auto-reload as
+This will start a dev server on <http://localhost:8080> and auto-reload as
 changes are made.
-
-Due to limitations with Parcel, changes made to `.ml` files besides entry point
-`App.ml` might not get picked up by the watcher. In this case, you can do a
-`touch src/App.ml` to get it to rebuild the Bucklescript files.
 
 Note that the SVG files are written manually and it's not recommended to make
 changes to them via a visual editor, since the code depends on certain
