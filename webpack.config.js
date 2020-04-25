@@ -6,7 +6,9 @@ const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
-module.exports = {
+const isProd = process.env.NODE_ENV === "production";
+
+const webpackConfig = {
   entry: "./src/index.js",
   optimization: {
     minimizer: [new TerserPlugin({}), new OptimizeCssAssetsPlugin({})]
@@ -26,17 +28,7 @@ module.exports = {
       },
       development: { disabled: true }
     }),
-    new HtmlWebpackPlugin({ template: "./src/index.html" }),
-    new GenerateSW({
-      swDest: "sw.js",
-      include: [/\.(html|css|js|webmanifest)$/],
-      runtimeCaching: [
-        {
-          urlPattern: /\/.+\.[0-9a-f]+\.[a-z]+$/i,
-          handler: "CacheFirst"
-        }
-      ]
-    })
+    new HtmlWebpackPlugin({ template: "./src/index.html" })
   ],
   module: {
     rules: [
@@ -58,7 +50,7 @@ module.exports = {
   },
   output: {
     path: __dirname + "/dist",
-    filename: "[name].[contenthash:8].js"
+    filename: isProd ? "[name].[contenthash:8].js" : "[name].js"
   },
   devServer: {
     overlay: true,
@@ -66,3 +58,20 @@ module.exports = {
     stats: "errors-only"
   }
 };
+
+if (isProd) {
+  webpackConfig.plugins.push(
+    new GenerateSW({
+      swDest: "sw.js",
+      include: [/\.(html|css|js|webmanifest)$/],
+      runtimeCaching: [
+        {
+          urlPattern: /\/.+\.[0-9a-f]+\.[a-z]+$/i,
+          handler: "CacheFirst"
+        }
+      ]
+    })
+  );
+}
+
+module.exports = webpackConfig;
