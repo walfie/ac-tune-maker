@@ -1,5 +1,4 @@
 open Tea
-open Tea.App
 open Tea.Html
 open Msg
 open Binding
@@ -199,7 +198,6 @@ let modal =
 ;;
 
 let view model =
-  let open Tea.Html.Attributes in
   let play_pause =
     let msg, content =
       match model.playing_index with
