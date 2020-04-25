@@ -13,7 +13,7 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(),
-    new MiniCssExtractPlugin({ filename: "[name].[hash:8].css" }),
+    new MiniCssExtractPlugin({ filename: "[name].[contenthash:8].css" }),
     new WebpackPluginPWAManifest({
       name: "Animal Crossing Tune Maker",
       shortName: "AC Tune Maker",
@@ -58,7 +58,7 @@ module.exports = {
   },
   output: {
     path: __dirname + "/dist",
-    filename: "[name].[hash:8].js"
+    filename: "[name].[contenthash:8].js"
   },
   devServer: {
     overlay: true,
