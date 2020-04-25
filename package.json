@@ -4,8 +4,7 @@
   "description": "A website for making Animal Crossing tunes",
   "license": "MIT",
   "scripts": {
-    "predev": "yarn run minify-svg",
-    "dev": "parcel src/index.html",
+    "dev": "concurrently 'yarn:bsb -make-world -w' yarn:webpack-dev-server",
     "fmt:ocamlformat": "ocamlformat --inplace src/*.ml src/*.mli",
     "fmt:prettier": "prettier --write \"**/*.{css,html,js,json,md,yaml,yml}\" --ignore-path .gitignore",
     "fmt": "yarn fmt:ocamlformat & yarn fmt:prettier",
@@ -28,7 +27,10 @@
   "devDependencies": {
     "bs-platform": "^7.2.2",
     "bsb-js": "^1.1.7",
+    "clean-webpack-plugin": "^3.0.0",
+    "concurrently": "^5.2.0",
     "gh-pages": "^2.2.0",
+    "html-webpack-plugin": "^4.2.0",
     "husky": "^4.2.3",
     "lint-staged": "^10.0.8",
     "parcel-bundler": "^1.12.4",
@@ -36,8 +38,14 @@
     "parcel-plugin-sw-cache": "^0.3.1",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",
+    "raw-loader": "^4.0.1",
     "shx": "^0.3.2",
-    "svgo": "^1.3.2"
+    "svgo": "^1.3.2",
+    "svgo-loader": "^2.2.1",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3",
+    "webpack-plugin-pwa-manifest": "^1.0.2"
   },
   "lint-staged": {
     "*.{ml,mli}": "ocamlformat --inplace"
@@ -63,25 +71,5 @@
       "**/*.{html,js,css,webmanifest}"
     ],
     "navigateFallback": "undefined"
-  },
-  "pwaManifest": {
-    "name": "Animal Crossing Tune Maker",
-    "shortName": "AC Tune Maker",
-    "startURL": ".",
-    "theme": "#99dad3",
-    "generateIconOptions": {
-      "baseIcon": "./static/icon.svg",
-      "sizes": [
-        96,
-        152,
-        192,
-        384,
-        512
-      ],
-      "genFavicons": true
-    },
-    "development": {
-      "disabled": true
-    }
   }
 }

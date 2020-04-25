@@ -1,16 +1,10 @@
-import { readFileSync } from "fs";
-import { main } from "./App.ml";
+import { main } from "./App.bs";
+import frogSvg from "../static/frogs.svg";
 
 (() => {
   const div = document.createElement("div");
   div.style = "height: 0";
-
-  if (process.env.NODE_ENV === "production") {
-    div.innerHTML = readFileSync(`${__dirname}/../build/frogs.svg`, "utf-8");
-  } else {
-    div.innerHTML = readFileSync(`${__dirname}/../static/frogs.svg`, "utf-8");
-  }
-
+  div.innerHTML = frogSvg;
   div.querySelector("svg").setAttribute("class", "js-svg-defs");
   document.body.appendChild(div);
 })();
