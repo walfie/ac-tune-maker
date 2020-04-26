@@ -90,6 +90,7 @@ let update model = function
     in
     { model with selected_index = Some index }, cmd
   | UpdateTune tune -> { model with tune }, Cmd.msg Stop
+  | SetLanguage lang -> { model with lang }, Task.ignore (AppTask.set_lang lang)
   | KeyPressed key ->
     let maybe_update_note dir =
       match model.selected_index with

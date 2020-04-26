@@ -8,6 +8,11 @@ module Lang = struct
     | "fr" -> Fr
     | _ -> En
   ;;
+
+  let to_string = function
+    | Fr -> "fr"
+    | En -> "en"
+  ;;
 end
 
 type t =

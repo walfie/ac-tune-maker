@@ -24,7 +24,7 @@ let frog_svg
     | Hold -> "#frog-hold", "frog__text", {js|—|js}
     | Rest -> "#frog-rest", "frog__text", ""
     | Random -> "#frog-random", "frog__text frog__text--large", "?"
-    | other -> "#frog-normal", "frog__text", meta.as_str |> I18n.get lang
+    | _ -> "#frog-normal", "frog__text", meta.as_str |> I18n.get lang
   in
   let y_offset = meta.index * -15 in
   let y_offset_prop = y (string_of_int y_offset) in

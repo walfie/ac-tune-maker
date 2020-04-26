@@ -1,6 +1,11 @@
 open Binding
 open Tea
 
+let set_lang (lang : I18n.Lang.t) =
+  let _ = I18n.Lang.to_string lang |> LocalStorage.setItem "lang" in
+  Task.succeed ()
+;;
+
 let set_document_title (title : string) =
   let _ = Dom.(document |. setTitle {j|$title - Animal Crossing Tune Maker|j}) in
   Task.succeed ()

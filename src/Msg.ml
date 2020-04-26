@@ -29,4 +29,5 @@ type t =
   | PromptTitle
   | UpdateTitle of Title.t
   | UrlChange of Web.Location.location
+  | SetLanguage of I18n.Lang.t
 [@@bs.deriving { accessors }]

@@ -17,6 +17,10 @@ module Player = struct
   external play_no_callback : player -> string -> unit = "play" [@@bs.send]
 end
 
+module LocalStorage = struct
+  external setItem : string -> string -> unit = "setItem" [@@bs.val] [@@bs.scope "window"]
+end
+
 module Dom = struct
   type element
 
