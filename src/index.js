@@ -28,11 +28,14 @@ const run = model => {
 let app = run();
 
 if (module.hot) {
-  module.hot.accept(["./App.bs", "../static/frogs.svg"], () => {
-    app.shutdown().then(model => {
-      app = run(model);
-    });
-  });
+  module.hot.accept(
+    ["./App.bs", "../static/frogs.svg", "../static/style.css"],
+    () => {
+      app.shutdown().then(model => {
+        app = run(model);
+      });
+    }
+  );
 }
 
 if ("serviceWorker" in navigator) {

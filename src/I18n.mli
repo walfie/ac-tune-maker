@@ -1,5 +1,7 @@
 module Lang : sig
-  type t
+  type t =
+    | En
+    | Fr
 
   val from_string : string -> t
   val to_string : t -> string

@@ -195,14 +195,27 @@ body,
   font-size: 1.3em;
 }
 
-.ac-modal__footer {
+.ac-modal-footer {
   border-top: 2px dashed #b8b49b;
   padding: 15px 10px 0 10px;
-  text-align: right;
+  display: flex;
 }
 
-.ac-modal__footer a {
+.ac-modal-footer a {
   font-weight: bold;
   color: #4c3d3c;
   text-decoration: none;
+}
+
+.ac-modal-footer label {
+  padding: 0 8px 0 2px;
+  text-transform: uppercase;
+}
+
+.ac-modal-footer__item {
+  flex-basis: 50%;
+}
+
+.ac-modal-footer__item--links {
+  text-align: right;
 }

@@ -18,7 +18,8 @@ module Player = struct
 end
 
 module LocalStorage = struct
-  external setItem : string -> string -> unit = "setItem" [@@bs.val] [@@bs.scope "window"]
+  external setItem : string -> string -> unit = "setItem"
+    [@@bs.val] [@@bs.scope "window", "localStorage"]
 end
 
 module Dom = struct

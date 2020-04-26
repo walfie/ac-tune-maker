@@ -157,7 +157,24 @@ let onClickStopPropagation msg =
     (Tea.Json.Decoder.succeed msg)
 ;;
 
-let modal =
+let modal selected_lang =
+  let lang_select lang =
+    let lang_str = I18n.Lang.to_string lang in
+    [ input'
+        [ type' "radio"
+        ; name "lang"
+        ; id lang_str
+        ; value lang_str
+        ; checked (lang = selected_lang)
+        ; onClick (Msg.SetLanguage lang)
+        ]
+        []
+    ; label [ for' lang_str ] [ text lang_str ]
+    ]
+  in
+  let lang_radio_buttons =
+    [ I18n.Lang.En; I18n.Lang.Fr ] |> List.map lang_select |> List.flatten
+  in
   div
     ~key:""
     [ class' "ac-modal__bg"; onClick (Msg.ShowInfo false) ]
@@ -184,16 +201,20 @@ let modal =
                  pre-loaded), to make it easier for others to play it."
             ]
         ; div
-            [ class' "ac-modal__footer" ]
-            [ a
-                [ href "https://twitter.com/walfieee/status/1240718100460273665"
-                ; target "_blank"
+            [ class' "ac-modal-footer" ]
+            [ div [ class' "ac-modal-footer__item" ] lang_radio_buttons
+            ; div
+                [ class' "ac-modal-footer__item ac-modal-footer__item--links" ]
+                [ a
+                    [ href "https://twitter.com/walfieee/status/1240718100460273665"
+                    ; target "_blank"
+                    ]
+                    [ text "Twitter" ]
+                ; text {js|  · |js}
+                ; a
+                    [ href "https://github.com/walfie/ac-tune-maker"; target "_blank" ]
+                    [ text "GitHub" ]
                 ]
-                [ text "Twitter" ]
-            ; text {js|  · |js}
-            ; a
-                [ href "https://github.com/walfie/ac-tune-maker"; target "_blank" ]
-                [ text "GitHub" ]
             ]
         ]
     ; div [ class' "ac-modal__pad-end" ] []
@@ -217,7 +238,7 @@ let view model =
         ~playing_index:model.playing_index
         ~title:model.title
         ~lang:model.lang
-    ; (if model.modal_visible then modal else noNode)
+    ; (if model.modal_visible then modal model.lang else noNode)
     ; div
         [ class' "ac-controls" ]
         [ input'

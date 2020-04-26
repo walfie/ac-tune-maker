@@ -36,7 +36,13 @@ const webpackConfig = {
     rules: [
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"]
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: { hmr: !isProd }
+          },
+          "css-loader"
+        ]
       },
       {
         test: /\.svg$/,
