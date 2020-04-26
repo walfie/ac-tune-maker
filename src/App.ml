@@ -18,6 +18,7 @@ type state =
   ; selected_index : Tune.Index.t option
   ; awaiting_frame : bool
   ; modal_visible : bool
+  ; lang : I18n.Lang.t
   }
 
 let locationToRoute location =
@@ -34,7 +35,7 @@ let update_at_index l index new_value =
 
 let default_title = "AC Tune Maker"
 
-let init () location =
+let init lang location =
   let route = locationToRoute location in
   ( { route
     ; tune = Tune.default
@@ -44,6 +45,7 @@ let init () location =
     ; selected_index = None
     ; modal_visible = false
     ; location
+    ; lang = I18n.Lang.from_string lang
     }
   , Cmd.batch [ Cmd.msg (UrlChange location) ] )
 ;;
@@ -88,6 +90,7 @@ let update model = function
     in
     { model with selected_index = Some index }, cmd
   | UpdateTune tune -> { model with tune }, Cmd.msg Stop
+  | SetLanguage lang -> { model with lang }, Task.ignore (AppTask.set_lang lang)
   | KeyPressed key ->
     let maybe_update_note dir =
       match model.selected_index with
@@ -136,7 +139,7 @@ let update model = function
     let play_note _ =
       match note with
       | Note.Rest | Note.Hold -> ()
-      | _ -> player |. Player.play_no_callback (Note.string_of_note note)
+      | _ -> player |. Player.play_no_callback (Note.string_of_note note).en
     in
     model, Cmd.call play_note
   | ShowInfo modal_visible -> { model with modal_visible }, Cmd.none
@@ -154,7 +157,24 @@ let onClickStopPropagation msg =
     (Tea.Json.Decoder.succeed msg)
 ;;
 
-let modal =
+let modal selected_lang =
+  let lang_select lang =
+    let lang_str = I18n.Lang.to_string lang in
+    [ input'
+        [ type' "radio"
+        ; name "lang"
+        ; id lang_str
+        ; value lang_str
+        ; checked (lang = selected_lang)
+        ; onClick (Msg.SetLanguage lang)
+        ]
+        []
+    ; label [ for' lang_str ] [ text lang_str ]
+    ]
+  in
+  let lang_radio_buttons =
+    [ I18n.Lang.En; I18n.Lang.Fr ] |> List.map lang_select |> List.flatten
+  in
   div
     ~key:""
     [ class' "ac-modal__bg"; onClick (Msg.ShowInfo false) ]
@@ -181,16 +201,20 @@ let modal =
                  pre-loaded), to make it easier for others to play it."
             ]
         ; div
-            [ class' "ac-modal__footer" ]
-            [ a
-                [ href "https://twitter.com/walfieee/status/1240718100460273665"
-                ; target "_blank"
+            [ class' "ac-modal-footer" ]
+            [ div [ class' "ac-modal-footer__item" ] lang_radio_buttons
+            ; div
+                [ class' "ac-modal-footer__item ac-modal-footer__item--links" ]
+                [ a
+                    [ href "https://twitter.com/walfieee/status/1240718100460273665"
+                    ; target "_blank"
+                    ]
+                    [ text "Twitter" ]
+                ; text {js|  · |js}
+                ; a
+                    [ href "https://github.com/walfie/ac-tune-maker"; target "_blank" ]
+                    [ text "GitHub" ]
                 ]
-                [ text "Twitter" ]
-            ; text {js|  · |js}
-            ; a
-                [ href "https://github.com/walfie/ac-tune-maker"; target "_blank" ]
-                [ text "GitHub" ]
             ]
         ]
     ; div [ class' "ac-modal__pad-end" ] []
@@ -213,7 +237,8 @@ let view model =
         ~selected_index:model.selected_index
         ~playing_index:model.playing_index
         ~title:model.title
-    ; (if model.modal_visible then modal else noNode)
+        ~lang:model.lang
+    ; (if model.modal_visible then modal model.lang else noNode)
     ; div
         [ class' "ac-controls" ]
         [ input'
@@ -251,7 +276,7 @@ let subscriptions model =
     ]
 ;;
 
-let main container cachedModel =
+let main container lang cachedModel =
   (* Replace the existing shutdown function with one that returns a Promise
    * with the current state of the app, for hot module replacement purposes *)
   let resolveRef = ref None in
@@ -269,14 +294,14 @@ let main container cachedModel =
   let init =
     match cachedModel with
     | None -> init
-    | Some model -> fun () _location -> model, Cmd.none
+    | Some model -> fun _lang _location -> model, Cmd.none
   in
   let run =
     Tea.Navigation.navigationProgram
       urlChange
       { init; update; view; subscriptions; shutdown }
   in
-  let app = run container () in
+  let app = run container lang in
   let oldShutdown = app##shutdown in
   let newShutdown () =
     let _ = oldShutdown () in

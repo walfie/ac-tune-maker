@@ -9,21 +9,33 @@ const svgContainer = (() => {
   return div;
 })();
 
+const getLanguage = () => {
+  return (
+    localStorage.getItem("lang") ||
+    (navigator.languages && navigator.languages[0]) ||
+    navigator.language ||
+    "en-US"
+  );
+};
+
 const run = model => {
   svgContainer.innerHTML = frogSvg;
   svgContainer.querySelector("svg").setAttribute("class", "js-svg-defs");
 
-  return main(document.getElementById("app"), model);
+  return main(document.getElementById("app"), getLanguage(), model);
 };
 
 let app = run();
 
 if (module.hot) {
-  module.hot.accept(["./App.bs", "../static/frogs.svg"], () => {
-    app.shutdown().then(model => {
-      app = run(model);
-    });
-  });
+  module.hot.accept(
+    ["./App.bs", "../static/frogs.svg", "../static/style.css"],
+    () => {
+      app.shutdown().then(model => {
+        app = run(model);
+      });
+    }
+  );
 }
 
 if ("serviceWorker" in navigator) {
