@@ -251,8 +251,36 @@ let subscriptions model =
     ]
 ;;
 
-let main =
-  Tea.Navigation.navigationProgram
-    urlChange
-    { init; update; view; subscriptions; shutdown = (fun _ -> Cmd.none) }
+let main container cachedModel =
+  (* Replace the existing shutdown function with one that returns a Promise
+   * with the current state of the app, for hot module replacement purposes *)
+  let resolveRef = ref None in
+  let shutdownPromise =
+    Js.Promise.make (fun ~resolve ~reject:_ -> resolveRef := Some resolve)
+  in
+  let shutdown model =
+    let _ =
+      match !resolveRef with
+      | None -> ()
+      | Some resolve -> (resolve model [@bs])
+    in
+    Cmd.none
+  in
+  let init =
+    match cachedModel with
+    | None -> init
+    | Some model -> fun () _location -> model, Cmd.none
+  in
+  let run =
+    Tea.Navigation.navigationProgram
+      urlChange
+      { init; update; view; subscriptions; shutdown }
+  in
+  let app = run container () in
+  let oldShutdown = app##shutdown in
+  let newShutdown () =
+    let _ = oldShutdown () in
+    shutdownPromise
+  in
+  Js.Obj.assign app [%obj { shutdown = newShutdown }]
 ;;

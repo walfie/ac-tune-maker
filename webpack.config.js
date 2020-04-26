@@ -15,7 +15,9 @@ const webpackConfig = {
   },
   plugins: [
     new CleanWebpackPlugin(),
-    new MiniCssExtractPlugin({ filename: "[name].[contenthash:8].css" }),
+    new MiniCssExtractPlugin({
+      filename: isProd ? "[name].[contenthash:8].css" : "[name].css"
+    }),
     new WebpackPluginPWAManifest({
       name: "Animal Crossing Tune Maker",
       shortName: "AC Tune Maker",
@@ -26,7 +28,7 @@ const webpackConfig = {
         sizes: [96, 152, 192, 384, 512],
         genFavicons: true
       },
-      development: { disabled: true }
+      disabled: !isProd
     }),
     new HtmlWebpackPlugin({ template: "./src/index.html" })
   ],
