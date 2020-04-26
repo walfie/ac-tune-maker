@@ -136,7 +136,7 @@ let update model = function
     let play_note _ =
       match note with
       | Note.Rest | Note.Hold -> ()
-      | _ -> player |. Player.play_no_callback (Note.string_of_note note)
+      | _ -> player |. Player.play_no_callback (Note.string_of_note note).en
     in
     model, Cmd.call play_note
   | ShowInfo modal_visible -> { model with modal_visible }, Cmd.none
@@ -213,6 +213,7 @@ let view model =
         ~selected_index:model.selected_index
         ~playing_index:model.playing_index
         ~title:model.title
+        ~lang:Note.I18n.En
     ; (if model.modal_visible then modal else noNode)
     ; div
         [ class' "ac-controls" ]

@@ -12,19 +12,20 @@ let classes classes =
 ;;
 
 let frog_svg
+    (lang : I18n.lang)
     (index : Tune.Index.t)
     (note : Note.note)
     (is_large : bool)
     (is_selected : bool)
   =
+  let meta = Note.meta note in
   let note_href, note_class, note_text =
     match note with
     | Hold -> "#frog-hold", "frog__text", {js|—|js}
     | Rest -> "#frog-rest", "frog__text", ""
     | Random -> "#frog-random", "frog__text frog__text--large", "?"
-    | other -> "#frog-normal", "frog__text", string_of_note other
+    | other -> "#frog-normal", "frog__text", meta.as_str |> I18n.get lang
   in
-  let meta = Note.meta note in
   let y_offset = meta.index * -15 in
   let y_offset_prop = y (string_of_int y_offset) in
   let hand =
@@ -75,12 +76,16 @@ let move_to_end index input_list =
   | _ -> input_list
 ;;
 
-let note_picker (current_note : Note.note option) (selected_index : Tune.Index.t) =
+let note_picker
+    (lang : I18n.lang)
+    (current_note : Note.note option)
+    (selected_index : Tune.Index.t)
+  =
   let to_elem note =
     let meta = Note.meta note in
     let x_pos = meta.index * 150 in
     let update_note = Msg.updateNote selected_index (Msg.Direction.Set note) in
-    let letter = if note = Note.Random then "?" else meta.as_str in
+    let letter = if note = Note.Random then "?" else meta.as_str |> I18n.get lang in
     let current_indicator =
       if current_note = Some note
       then rect [ class' "note_picker__current"; fill meta.color ] []
@@ -131,6 +136,7 @@ let bg_svg
     ~(selected_index : Tune.Index.t option)
     ~(playing_index : Tune.Index.t option)
     ~(title : Msg.Title.t)
+    ~(lang : I18n.lang)
   =
   let current_note = Belt.Option.map selected_index (fun n -> Tune.get n tune) in
   let make_frog index note =
@@ -140,7 +146,7 @@ let bg_svg
       | None -> is_selected
       | Some i -> index = i
     in
-    frog_svg index note is_large is_selected
+    frog_svg lang index note is_large is_selected
   in
   let positioned_frog index frog =
     let x = index mod 8 * 345 in
@@ -156,7 +162,7 @@ let bg_svg
     | Some index -> frogs |> move_to_end (Tune.Index.to_int index)
   in
   let note_picker_elem =
-    selected_index |. Belt.Option.mapWithDefault noNode (note_picker current_note)
+    selected_index |. Belt.Option.mapWithDefault noNode (note_picker lang current_note)
   in
   svg
     [ class' "ac-main js-svg-main"; viewBox viewBoxString ]

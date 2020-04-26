@@ -201,7 +201,7 @@ text {
   pointer-events: none;
   user-select: none;
   fill: #f9fbe2;
-  font-size: 100px;
+  font-size: 85px;
   mix-blend-mode: lighten;
   transform: translate(0, 35px);
   font-weight: bold;

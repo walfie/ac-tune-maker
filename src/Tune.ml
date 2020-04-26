@@ -32,7 +32,7 @@ let from_string (str : string) : t =
 
 let to_string (tune : t) : string =
   tune
-  |> List.map Note.string_of_note
+  |> List.map (fun n -> (Note.string_of_note n).en)
   |> String.concat ""
   |. Js.String.slice ~from:0 ~to_:length
 ;;
