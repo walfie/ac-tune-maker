@@ -218,7 +218,7 @@ let view model =
         [ class' "ac-controls" ]
         [ input'
             [ class' "ac-share-url"
-            ; Vdom.attribute "" "readonly" "readonly"
+            ; Html2.Attributes.readonly true
             ; value (share_url model)
             ]
             []
