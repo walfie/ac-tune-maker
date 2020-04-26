@@ -69,7 +69,7 @@ text {
 .frog__text {
   user-select: none;
   fill: #3d2700;
-  font-size: 135px;
+  font-size: 130px;
   font-weight: bold;
   text-anchor: middle;
   transform: translate(150px, 215px);
