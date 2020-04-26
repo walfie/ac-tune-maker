@@ -1,27 +1,3 @@
-module type I18n = sig
-  type lang
-  type t
-
-  val get : lang -> t -> string
-end
-
-module I18n = struct
-  type lang =
-    | En
-    | Fr
-
-  type t =
-    { en : string
-    ; fr : string
-    }
-
-  let get lang v =
-    match lang with
-    | En -> v.en
-    | Fr -> v.fr
-  ;;
-end
-
 type note =
   | Rest
   | Hold
@@ -53,6 +29,7 @@ let random () = Js.Array.length all |> Js.Math.random_int 0 |> Js.Array.unsafe_g
 
 let meta n =
   let m index (en, fr) color next prev =
+    let open I18n in
     { index; as_str = { en; fr }; color; next; prev }
   in
   match n with

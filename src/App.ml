@@ -18,6 +18,7 @@ type state =
   ; selected_index : Tune.Index.t option
   ; awaiting_frame : bool
   ; modal_visible : bool
+  ; lang : I18n.Lang.t
   }
 
 let locationToRoute location =
@@ -34,7 +35,7 @@ let update_at_index l index new_value =
 
 let default_title = "AC Tune Maker"
 
-let init () location =
+let init lang location =
   let route = locationToRoute location in
   ( { route
     ; tune = Tune.default
@@ -44,6 +45,7 @@ let init () location =
     ; selected_index = None
     ; modal_visible = false
     ; location
+    ; lang = I18n.Lang.from_string lang
     }
   , Cmd.batch [ Cmd.msg (UrlChange location) ] )
 ;;
@@ -213,7 +215,7 @@ let view model =
         ~selected_index:model.selected_index
         ~playing_index:model.playing_index
         ~title:model.title
-        ~lang:Note.I18n.En
+        ~lang:model.lang
     ; (if model.modal_visible then modal else noNode)
     ; div
         [ class' "ac-controls" ]
@@ -252,7 +254,7 @@ let subscriptions model =
     ]
 ;;
 
-let main container cachedModel =
+let main container lang cachedModel =
   (* Replace the existing shutdown function with one that returns a Promise
    * with the current state of the app, for hot module replacement purposes *)
   let resolveRef = ref None in
@@ -270,14 +272,14 @@ let main container cachedModel =
   let init =
     match cachedModel with
     | None -> init
-    | Some model -> fun () _location -> model, Cmd.none
+    | Some model -> fun _lang _location -> model, Cmd.none
   in
   let run =
     Tea.Navigation.navigationProgram
       urlChange
       { init; update; view; subscriptions; shutdown }
   in
-  let app = run container () in
+  let app = run container lang in
   let oldShutdown = app##shutdown in
   let newShutdown () =
     let _ = oldShutdown () in

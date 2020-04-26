@@ -9,11 +9,20 @@ const svgContainer = (() => {
   return div;
 })();
 
+const getLanguage = () => {
+  return (
+    localStorage.getItem("lang") ||
+    (navigator.languages && navigator.languages[0]) ||
+    navigator.language ||
+    "en-US"
+  );
+};
+
 const run = model => {
   svgContainer.innerHTML = frogSvg;
   svgContainer.querySelector("svg").setAttribute("class", "js-svg-defs");
 
-  return main(document.getElementById("app"), model);
+  return main(document.getElementById("app"), getLanguage(), model);
 };
 
 let app = run();

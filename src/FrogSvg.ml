@@ -12,7 +12,7 @@ let classes classes =
 ;;
 
 let frog_svg
-    (lang : I18n.lang)
+    (lang : I18n.Lang.t)
     (index : Tune.Index.t)
     (note : Note.note)
     (is_large : bool)
@@ -77,7 +77,7 @@ let move_to_end index input_list =
 ;;
 
 let note_picker
-    (lang : I18n.lang)
+    (lang : I18n.Lang.t)
     (current_note : Note.note option)
     (selected_index : Tune.Index.t)
   =
@@ -136,7 +136,7 @@ let bg_svg
     ~(selected_index : Tune.Index.t option)
     ~(playing_index : Tune.Index.t option)
     ~(title : Msg.Title.t)
-    ~(lang : I18n.lang)
+    ~(lang : I18n.Lang.t)
   =
   let current_note = Belt.Option.map selected_index (fun n -> Tune.get n tune) in
   let make_frog index note =
