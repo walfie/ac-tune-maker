@@ -15,7 +15,7 @@
   },
   "source": "src/index.html",
   "dependencies": {
-    "bucklescript-tea": "^0.14.0",
+    "bucklescript-tea": "^0.15.0",
     "qrcode-generator": "^1.4.4",
     "save-svg-as-png": "^1.4.17"
   },

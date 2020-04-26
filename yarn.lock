@@ -1659,10 +1659,10 @@ bsb-js@^1.1.7:
   resolved "https://registry.yarnpkg.com/bsb-js/-/bsb-js-1.1.7.tgz#12cc91e974f5896b3a2aa8358419d24e56f552c3"
   integrity sha512-FSR7d5Kb6KfVI5sLz9bEeD9pbA9F4Zbkk1xa6R9CJtyd+dJ7mIkxoXqv7cw7HWcuee+VpIhmjYzrplnFd/5Qgg==
 
-bucklescript-tea@^0.14.0:
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/bucklescript-tea/-/bucklescript-tea-0.14.0.tgz#1deeda0c59a1c410511d35f3c8aff436ec3fbac3"
-  integrity sha512-m/68A+70Uq1z6gDJW1xuDCcIOQj0r0QkOeTfiVGS8uCGRJnwA0TFDAnGpglJMphxzwueBcbjVAZzZJxktQPm2Q==
+bucklescript-tea@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/bucklescript-tea/-/bucklescript-tea-0.15.0.tgz#45198d042e79e5b2b306054841e8d502a480c068"
+  integrity sha512-ohK62oNyRxydBVc/v8y3dHszcEh65bTQJIGrB62IxMDqvhdxppPqFJ3DLa8TJQQmUTtj6PKnVaT/IHbsVWqohg==
 
 buffer-from@^1.0.0:
   version "1.1.1"
