@@ -72,6 +72,8 @@ module.exports = (env, options) => {
     webpackConfig.plugins.push(
       new GenerateSW({
         swDest: "sw.js",
+        skipWaiting: true,
+        clientsClaim: true,
         include: [/\.(html|css|js|webmanifest)$/],
         runtimeCaching: [
           {
