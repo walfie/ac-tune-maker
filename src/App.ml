@@ -277,18 +277,11 @@ let subscriptions model =
 ;;
 
 let main container lang cachedModel =
-  (* Replace the existing shutdown function with one that returns a Promise
-   * with the current state of the app, for hot module replacement purposes *)
-  let resolveRef = ref None in
-  let shutdownPromise =
-    Js.Promise.make (fun ~resolve ~reject:_ -> resolveRef := Some resolve)
-  in
+  (* Replace the existing shutdown function with one that returns the current
+   * state of the app, for hot module replacement purposes *)
+  let modelRef = ref None in
   let shutdown model =
-    let _ =
-      match !resolveRef with
-      | None -> ()
-      | Some resolve -> (resolve model [@bs])
-    in
+    let () = modelRef := Some model in
     Cmd.none
   in
   let init =
@@ -304,8 +297,8 @@ let main container lang cachedModel =
   let app = run container lang in
   let oldShutdown = app##shutdown in
   let newShutdown () =
-    let _ = oldShutdown () in
-    shutdownPromise
+    let () = oldShutdown () in
+    !modelRef |> Belt.Option.getExn
   in
   Js.Obj.assign app [%obj { shutdown = newShutdown }]
 ;;

@@ -31,9 +31,7 @@ if (module.hot) {
   module.hot.accept(
     ["./App.bs", "../static/frogs.svg", "../static/style.css"],
     () => {
-      app.shutdown().then(model => {
-        app = run(model);
-      });
+      app = run(app.shutdown());
     }
   );
 }
