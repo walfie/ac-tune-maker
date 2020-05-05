@@ -1,6 +1,6 @@
 open Tea.Html
-open Tea.Svg
-open Tea.Svg.Attributes
+open! Tea.Svg
+open! Tea.Svg.Attributes
 open Note
 
 let classes classes =
