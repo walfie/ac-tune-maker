@@ -10,6 +10,7 @@
     "in-source": true
   },
   "suffix": ".bs.js",
+  "bsc-flags": ["-bs-super-errors"],
   "bs-dependencies": ["bucklescript-tea"],
   "warnings": {
     "error": "+101+8"

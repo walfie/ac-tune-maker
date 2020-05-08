@@ -4,7 +4,8 @@
   "description": "A website for making Animal Crossing tunes",
   "license": "MIT",
   "scripts": {
-    "dev": "concurrently 'yarn:bsb -make-world -w' yarn:webpack-dev-server",
+    "dev": "concurrently yarn:bsb:watch yarn:webpack-dev-server",
+    "bsb:watch": "cross-env NINJA_ANSI_FORCED=1 bsb -make-world -w",
     "fmt:ocamlformat": "ocamlformat --inplace src/*.ml src/*.mli",
     "fmt:prettier": "prettier --write '**/*.{css,html,js,json,md,yaml,yml}' --ignore-path .gitignore",
     "fmt": "yarn fmt:ocamlformat & yarn fmt:prettier",
@@ -24,6 +25,7 @@
     "bsb-js": "^1.1.7",
     "clean-webpack-plugin": "^3.0.0",
     "concurrently": "^5.2.0",
+    "cross-env": "^7.0.2",
     "css-loader": "^3.5.3",
     "gh-pages": "^2.2.0",
     "html-webpack-plugin": "^4.2.0",
