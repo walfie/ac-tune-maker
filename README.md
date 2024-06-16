@@ -16,7 +16,7 @@ yarn install
 - Run the development server
 
 ```
-yarn run dev
+yarn dev
 ```
 
 This will start a dev server on <http://localhost:8080> and auto-reload as
