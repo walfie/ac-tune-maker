@@ -103,10 +103,11 @@ let update model = function
       | None -> Cmd.msg (SelectNote (Some default))
     in
     (match key with
-    | Keyboard.Up -> model, maybe_update_note Direction.Next
-    | Keyboard.Down -> model, maybe_update_note Direction.Prev
-    | Keyboard.Left -> model, maybe_update_index Tune.Index.max Tune.Index.prev
-    | Keyboard.Right -> model, maybe_update_index Tune.Index.min Tune.Index.next)
+     | Keyboard.Up -> model, maybe_update_note Direction.Next
+     | Keyboard.Down -> model, maybe_update_note Direction.Prev
+     | Keyboard.Left -> model, maybe_update_index Tune.Index.max Tune.Index.prev
+     | Keyboard.Right -> model, maybe_update_index Tune.Index.min Tune.Index.next
+     | Keyboard.ChangeNote note -> model, maybe_update_note (Direction.Set note))
   | PlayingNote maybe_index -> { model with playing_index = maybe_index }, Cmd.none
   | ExportImage -> { model with awaiting_frame = true; selected_index = None }, Cmd.none
   | UrlChange location ->
@@ -131,10 +132,10 @@ let update model = function
     in
     let maybe_new_note = model.tune |> Tune.get index |> f in
     (match maybe_new_note with
-    | None -> model, Cmd.none
-    | Some new_note ->
-      let new_tune = model.tune |> Tune.update index new_note in
-      { model with tune = new_tune }, Cmd.msg (PlayNote new_note))
+     | None -> model, Cmd.none
+     | Some new_note ->
+       let new_tune = model.tune |> Tune.update index new_note in
+       { model with tune = new_tune }, Cmd.msg (PlayNote new_note))
   | PlayNote note ->
     let play_note _ =
       match note with
@@ -270,8 +271,8 @@ let view model =
 let subscriptions model =
   Sub.batch
     [ (if model.awaiting_frame
-      then AnimationFrame.every (fun _ -> FrameRendered)
-      else Sub.none)
+       then AnimationFrame.every (fun _ -> FrameRendered)
+       else Sub.none)
     ; Sub.map keyPressed Keyboard.pressed
     ]
 ;;

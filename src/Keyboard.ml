@@ -5,18 +5,23 @@ type key =
   | Down
   | Left
   | Right
+  | ChangeNote of Note.note
 
-let key_of_int = function
-  | 37 -> Some Left
-  | 38 -> Some Up
-  | 39 -> Some Right
-  | 40 -> Some Down
+let of_note note = ChangeNote note
+
+let key_of_string = function
+  | "ArrowLeft" -> Some Left
+  | "ArrowUp" -> Some Up
+  | "ArrowRight" -> Some Right
+  | "ArrowDown" -> Some Down
+  | other when String.length other == 1 -> Note.of_char other |. Belt.Option.map of_note
   | _ -> None
 ;;
 
+(* TODO: Ignore key when ctrl or cmd are pressed *)
 let decode_event =
   let open Tea.Json in
-  Decoder.field "keyCode" Decoder.int |> Decoder.map key_of_int
+  Decoder.field "key" Decoder.string |> Decoder.map key_of_string
 ;;
 
 let pressed =
