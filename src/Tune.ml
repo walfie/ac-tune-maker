@@ -21,7 +21,7 @@ let random () : t = List.init length (fun _ -> Note.random ())
 
 let from_string (str : string) : t =
   let right_pad = length - String.length str |> max 0 in
-  let get_or_rest c = Note.from_char c |. Belt.Option.getWithDefault Note.Rest in
+  let get_or_rest c = Note.of_char c |. Belt.Option.getWithDefault Note.Rest in
   str
   |> Js.String.slice ~from:0 ~to_:length
   |> Js.String.split ""

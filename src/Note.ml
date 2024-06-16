@@ -56,7 +56,7 @@ let prev note = (meta note).prev
 let color note = (meta note).color
 let string_of_note note = (meta note).as_str
 
-let from_char = function
+let of_char = function
   | "z" -> Some Rest
   | "-" -> Some Hold
   | "g" -> Some G
@@ -72,12 +72,12 @@ let from_char = function
   | "C" -> Some C'
   | "D" -> Some D'
   | "E" -> Some E'
-  | "q" -> Some Random
+  | "q" | "?" -> Some Random
   | _ -> None
 ;;
 
 let notes_of_string str =
-  let get_or_rest c = from_char c |. Belt.Option.getWithDefault Rest in
+  let get_or_rest c = of_char c |. Belt.Option.getWithDefault Rest in
   Js.String.split "" str |> Array.map get_or_rest |> Array.to_list
 ;;
 
