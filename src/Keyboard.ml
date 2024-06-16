@@ -18,10 +18,18 @@ let key_of_string = function
   | _ -> None
 ;;
 
-(* TODO: Ignore key when ctrl or cmd are pressed *)
 let decode_event =
   let open Tea.Json in
-  Decoder.field "key" Decoder.string |> Decoder.map key_of_string
+  (* Ignore key if any of alt/ctrl/meta are pressed *)
+  let ignore_modifier_keys key alt ctrl meta =
+    if alt || ctrl || meta then None else key_of_string key
+  in
+  Decoder.map4
+    ignore_modifier_keys
+    (Decoder.field "key" Decoder.string)
+    (Decoder.field "altKey" Decoder.bool)
+    (Decoder.field "ctrlKey" Decoder.bool)
+    (Decoder.field "metaKey" Decoder.bool)
 ;;
 
 let pressed =
